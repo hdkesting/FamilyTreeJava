@@ -49,15 +49,16 @@ public class Temporary {
             me.setSex('M');
             me.setId(-1l);
             System.out.println("------- saving --------");
-            session.save(me);
+            session.save(me); // NB will crash when record (with this key) already exists
             tx.commit();
 
             System.out.println("------- querying --------");
             tx = session.beginTransaction();
-            List people = session.createQuery("FROM individual").list();
-            for (Iterator iterator = people.iterator(); iterator.hasNext();) {
-                Individual person = (Individual)iterator.next();
-                System.out.println(person.getFirstNames() + " " + person.getLastName());
+            List<Individual> people = session.createQuery("From Individual").list();
+            System.out.println("==> # of persons: " + people.size());
+
+            for (Individual person: people) {
+                System.out.println("==> " + person.getFirstNames() + " /" + person.getLastName() + "/");
             }
 
             System.out.println("------- committing --------");
