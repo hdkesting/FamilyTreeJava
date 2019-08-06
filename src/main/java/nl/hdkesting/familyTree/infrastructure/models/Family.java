@@ -1,20 +1,41 @@
 package nl.hdkesting.familyTree.infrastructure.models;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+
+import javax.persistence.*;
 import java.sql.Date;
 import java.util.Set;
 
 @Entity
+@Table(name = "family")
 public class Family {
     @Id
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "marriagedate")
     private Date marriageDate;
+
+    @Column(name = "marriageplace")
     private String marriagePlace;
+
+    @Column(name = "divorcedate")
     private Date divorceDate;
+
+    @Column(name = "divorceplace")
     private String divorcePlace;
 
+    @ManyToMany
+    @JoinTable(
+            name = "spouses",
+            joinColumns = {@JoinColumn(name = "familyid")},
+            inverseJoinColumns = { @JoinColumn(name = "spouseid")})
     private Set<Individual> spouses;
+
+    @ManyToMany
+    @JoinTable(
+            name = "children",
+            joinColumns = {@JoinColumn(name = "familyid")},
+            inverseJoinColumns = { @JoinColumn(name = "childid")})
     private Set<Individual> children;
 
     public Set<Individual> getSpouses() {
