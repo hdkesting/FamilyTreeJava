@@ -11,13 +11,11 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
-import java.sql.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class Temporary {
+public class Test1 {
     private static SessionFactory factory;
     private static ServiceRegistry registry;
 
