@@ -1,7 +1,8 @@
 package nl.hdkesting.familyTree.infrastructure.models;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Set;
 
 @Entity
@@ -84,6 +85,11 @@ public class Individual {
 
     public void setBirthDate(Date birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public void setBirthDate(int year, int month, int day) {
+        GregorianCalendar cal = new GregorianCalendar(year, month, day);
+        this.birthDate = cal.getTime();
     }
 
     public String getBirthPlace() {

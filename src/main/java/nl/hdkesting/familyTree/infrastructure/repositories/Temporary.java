@@ -1,5 +1,6 @@
 package nl.hdkesting.familyTree.infrastructure.repositories;
 
+import nl.hdkesting.familyTree.infrastructure.models.Family;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -7,11 +8,14 @@ import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
 import java.sql.Date;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 public class Temporary {
     private static SessionFactory factory;
@@ -41,15 +45,38 @@ public class Temporary {
         try {
             tx = session.beginTransaction();
 
-            Individual me = new Individual();
-            me.setBirthDate(new Date(61, 4, 13)); // obsolete ctor, but use anyway in this dummy code
+            Individual me = getPerson(session, -1);
+
+            me.setBirthDate(1961, 5-1, 13);
             me.setBirthPlace("Amsterdam");
             me.setFirstNames("Hans Douwe");
             me.setLastName("Kesting");
             me.setSex('M');
-            me.setId(-1l);
+
             System.out.println("------- saving --------");
             session.save(me); // NB will crash when record (with this key) already exists
+
+            Individual paula = getPerson(session, -2);
+            paula.setBirthDate(1963, 2-1, 18);
+            paula.setFirstNames("Paula");
+            paula.setLastName("Andringa");
+            paula.setSex('F');
+            session.save(paula);
+
+            Family us = getFamily(session, -1);
+            us.setMarriageDate(1996, 4, 12);
+            Set<Individual> spouses = us.getSpouses();
+            if (spouses == null) {
+                us.setSpouses(new HashSet<Individual>());
+                spouses = us.getSpouses();
+            }
+
+            if (spouses.size() == 0) {
+                spouses.add(me);
+                spouses.add(paula);
+            }
+            session.save(us);
+
             tx.commit();
 
             System.out.println("------- querying --------");
@@ -77,5 +104,31 @@ public class Temporary {
         System.out.println("------- ending --------");
         StandardServiceRegistryBuilder.destroy(registry);
         System.out.println("------- exit --------");
+    }
+
+    private static Individual getPerson(Session session, long id) {
+        Query<Individual> qry = session.createQuery("From Individual Where id=:id");
+        qry.setParameter("id", id);
+        Individual res = qry.uniqueResult();
+
+        if (res == null) {
+            res = new Individual();
+            res.setId(id);
+        }
+
+        return res;
+    }
+
+    private static Family getFamily(Session session, long id) {
+        Query<Family> qry = session.createQuery("From Family Where id=:id");
+        qry.setParameter("id", id);
+        Family res = qry.uniqueResult();
+
+        if (res == null) {
+            res = new Family();
+            res.setId(id);
+        }
+
+        return res;
     }
 }

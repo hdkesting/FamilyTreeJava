@@ -2,7 +2,8 @@ package nl.hdkesting.familyTree.infrastructure.models;
 
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Set;
 
 @Entity
@@ -69,6 +70,12 @@ public class Family {
     public void setMarriageDate(Date marriageDate) {
         this.marriageDate = marriageDate;
     }
+
+    public void setMarriageDate(int year, int month, int day) {
+        GregorianCalendar cal = new GregorianCalendar(year, month, day);
+        this.marriageDate = cal.getTime();
+    }
+
 
     public String getMarriagePlace() {
         return marriagePlace;
