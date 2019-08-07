@@ -7,21 +7,23 @@ import nl.hdkesting.familyTree.infrastructure.models.Family;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
 import nl.hdkesting.familyTree.infrastructure.repositories.FamilyRepository;
 import nl.hdkesting.familyTree.infrastructure.repositories.IndividualRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class TreeService {
-    private static final char maleIdentifier = 'M';
-    private static final char femaleIdentifier = 'F';
+    private static final char MALE_CHAR = 'M';
+    private static final char FEMALE_CHAR = 'F';
+    private static final int MAXDEPTH = 4;
 
     private FamilyRepository familyRepository;
     private IndividualRepository individualRepository;
 
-    //@Autowired
+    // @Autowired
     public TreeService(FamilyRepository familyRepository, IndividualRepository individualRepository) {
         this.familyRepository = familyRepository;
         this.individualRepository = individualRepository;
@@ -32,7 +34,7 @@ public class TreeService {
 
         if (individual.isPresent()) {
             IndividualDto dto = getNewIndividualDto(id);
-            map(individual.get(), dto);
+            map(individual.get(), dto, MAXDEPTH);
             return Optional.of(dto);
         }
 
@@ -43,7 +45,7 @@ public class TreeService {
         ArrayList<IndividualDto> target = new ArrayList<>();
         Iterable<Individual> sourceList = individualRepository.findAll();
         for(Individual source: sourceList) {
-            target.add(convert(source));
+            target.add(convert(source, MAXDEPTH));
         }
 
         return target;
@@ -57,7 +59,7 @@ public class TreeService {
         Individual dbPerson = individualRepository.findById(id)
                 .orElseGet(() -> getNewIndividual(id));
 
-        map(person, dbPerson);
+        map(person, dbPerson, 2);
         individualRepository.save(dbPerson);
     }
 
@@ -73,13 +75,33 @@ public class TreeService {
                     return f;
                 });
 
-        map(family, dbFamily);
+        map(family, dbFamily, 2);
         familyRepository.save(dbFamily);
     }
 
-    private IndividualDto convert(Individual source) {
+    private IndividualDto convert(Individual source, int depth) {
         IndividualDto target = getNewIndividualDto(source.getId());
-        map(source, target);
+        map(source, target, depth);
+        return target;
+    }
+
+    private Individual convert(IndividualDto source, int depth) {
+        Individual target = individualRepository.findById(source.getId())
+                .orElseGet(() -> getNewIndividual(source.getId()));
+        map(source, target, depth);
+        return target;
+    }
+
+    private FamilyDto convert(Family source, int depth) {
+        FamilyDto target = getNewFamilyDto(source.getId());
+        map(source, target, depth);
+        return target;
+    }
+
+    private Family convert(FamilyDto source, int depth) {
+        Family target = familyRepository.findById(source.getId())
+                .orElseGet(() -> getNewFamily(source.getId()));
+        map(source, target, depth);
         return target;
     }
 
@@ -95,29 +117,57 @@ public class TreeService {
         return i;
     }
 
-    private void map(FamilyDto fromDtoFamily, Family toDbFamily) {
+    private FamilyDto getNewFamilyDto(long id) {
+        FamilyDto f = new FamilyDto();
+        f.setId(id);
+        return f;
+    }
+
+    private Family getNewFamily(long id) {
+        Family f = new Family();
+        f.setId(id);
+        return f;
+    }
+
+    private void map(FamilyDto fromDtoFamily, Family toDbFamily, int depth) {
         toDbFamily.setMarriageDate(fromDtoFamily.getMarriageDate());
         toDbFamily.setMarriagePlace(fromDtoFamily.getMarriagePlace());
         toDbFamily.setDivorceDate(fromDtoFamily.getDivorceDate());
         toDbFamily.setDivorcePlace(fromDtoFamily.getDivorcePlace());
+
+        depth--;
+        if (depth <= 0) return;
+
+        // beware of deep recursion, add a depth limit
+        Set<IndividualDto> spousesSource = fromDtoFamily.getSpouses();
+        if (spousesSource.size() > 0) {
+            Set<Individual> spousesTarget = toDbFamily.getSpouses();
+            for (IndividualDto spouseDto : spousesSource) {
+                spousesTarget.add(convert(spouseDto, depth));
+            }
+        }
     }
 
-    private void map(Family fromDbFamily, FamilyDto toDtoFamily) {
+    private void map(Family fromDbFamily, FamilyDto toDtoFamily, int depth) {
         toDtoFamily.setMarriageDate(fromDbFamily.getMarriageDate());
         toDtoFamily.setMarriagePlace(fromDbFamily.getMarriagePlace());
         toDtoFamily.setDivorceDate(fromDbFamily.getDivorceDate());
         toDtoFamily.setDivorcePlace(fromDbFamily.getDivorcePlace());
+
+        depth--;
+        if (depth <= 0) return;
+
     }
 
-    private void map(IndividualDto fromDtoPerson, Individual toDbPerson) {
+    private void map(IndividualDto fromDtoPerson, Individual toDbPerson, int depth) {
         toDbPerson.setFirstNames(fromDtoPerson.getFirstNames());
         toDbPerson.setLastName(fromDtoPerson.getLastName());
         switch (fromDtoPerson.getSex()){
             case Male:
-                toDbPerson.setSex(maleIdentifier);
+                toDbPerson.setSex(MALE_CHAR);
                 break;
             case Female:
-                toDbPerson.setSex(femaleIdentifier);
+                toDbPerson.setSex(FEMALE_CHAR);
                 break;
         }
 
@@ -125,16 +175,19 @@ public class TreeService {
         toDbPerson.setBirthPlace(fromDtoPerson.getBirthPlace());
         toDbPerson.setDeathDate(fromDtoPerson.getDeathDate());
         toDbPerson.setDeathPlace(fromDtoPerson.getDeathPlace());
+
+        depth--;
+        if (depth <= 0) return;
     }
 
-    private void map(Individual fromDbPerson,IndividualDto  toDtoPerson) {
+    private void map(Individual fromDbPerson, IndividualDto  toDtoPerson, int depth) {
         toDtoPerson.setFirstNames(fromDbPerson.getFirstNames());
         toDtoPerson.setLastName(fromDbPerson.getLastName());
         switch (fromDbPerson.getSex()){
-            case maleIdentifier:
+            case MALE_CHAR:
                 toDtoPerson.setSex(Sex.Male);
                 break;
-            case femaleIdentifier:
+            case FEMALE_CHAR:
                 toDtoPerson.setSex(Sex.Female);
                 break;
         }
@@ -143,6 +196,20 @@ public class TreeService {
         toDtoPerson.setBirthPlace(fromDbPerson.getBirthPlace());
         toDtoPerson.setDeathDate(fromDbPerson.getDeathDate());
         toDtoPerson.setDeathPlace(fromDbPerson.getDeathPlace());
-    }
 
+        depth--;
+        if (depth <= 0) return;
+
+        var sourceChildFams = fromDbPerson.getChildFamilies();
+        var targetChildFams = toDtoPerson.getChildFamilies();
+        for (Family source : sourceChildFams) {
+            targetChildFams.add(convert(source, depth));
+        }
+
+        var sourceSpouseFams = fromDbPerson.getSpouseFamilies();
+        var targetSpouseFams = toDtoPerson.getSpouseFamilies();
+        for (Family source : sourceSpouseFams) {
+            targetSpouseFams.add(convert(source, depth));
+        }
+    }
 }

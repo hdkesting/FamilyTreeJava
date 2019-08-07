@@ -1,6 +1,7 @@
 package nl.hdkesting.familyTree.core.dto;
 
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 public class IndividualDto {
@@ -12,8 +13,8 @@ public class IndividualDto {
     private String birthPlace;
     private Date deathDate;
     private String deathPlace;
-    private Set<FamilyDto> spouseFamilies;
-    private Set<FamilyDto> childFamilies;
+    private Set<FamilyDto> spouseFamilies = new HashSet<>();
+    private Set<FamilyDto> childFamilies = new HashSet<>();
 
     public Long getId() {
         return id;

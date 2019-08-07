@@ -3,6 +3,7 @@ package nl.hdkesting.familyTree.infrastructure.models;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -38,14 +39,14 @@ public class Individual {
             name = "spouses",
             joinColumns = {@JoinColumn(name = "spouseid")},
             inverseJoinColumns = { @JoinColumn(name = "familyid")})
-    private Set<Family> spouseFamilies;
+    private Set<Family> spouseFamilies = new HashSet<>();
 
     @ManyToMany
     @JoinTable(
             name = "children",
             joinColumns = {@JoinColumn(name = "childid")},
             inverseJoinColumns = { @JoinColumn(name = "familyid")})
-    private Set<Family> childFamilies;
+    private Set<Family> childFamilies = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -114,5 +115,21 @@ public class Individual {
 
     public void setDeathPlace(String deathPlace) {
         this.deathPlace = deathPlace;
+    }
+
+    public Set<Family> getSpouseFamilies() {
+        return spouseFamilies;
+    }
+
+    public void setSpouseFamilies(Set<Family> spouseFamilies) {
+        this.spouseFamilies = spouseFamilies;
+    }
+
+    public Set<Family> getChildFamilies() {
+        return childFamilies;
+    }
+
+    public void setChildFamilies(Set<Family> childFamilies) {
+        this.childFamilies = childFamilies;
     }
 }
