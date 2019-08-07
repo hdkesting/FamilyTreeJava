@@ -10,7 +10,6 @@ import nl.hdkesting.familyTree.infrastructure.repositories.IndividualRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
@@ -20,8 +19,8 @@ public class TreeService {
     private static final char FEMALE_CHAR = 'F';
     private static final int MAXDEPTH = 4;
 
-    private FamilyRepository familyRepository;
-    private IndividualRepository individualRepository;
+    private final FamilyRepository familyRepository;
+    private final IndividualRepository individualRepository;
 
     // @Autowired
     public TreeService(FamilyRepository familyRepository, IndividualRepository individualRepository) {
