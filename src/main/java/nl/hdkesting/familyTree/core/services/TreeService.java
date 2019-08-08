@@ -29,7 +29,7 @@ public class TreeService {
     }
 
     public Optional<IndividualDto> getIndividualById(long id) {
-        Optional<Individual> individual = individualRepository.findById(id);
+        Optional<Individual> individual = this.individualRepository.findById(id);
 
         if (individual.isPresent()) {
             IndividualDto dto = getNewIndividualDto(id);
@@ -42,12 +42,28 @@ public class TreeService {
 
     public Iterable<IndividualDto> getAllIndividuals() {
         ArrayList<IndividualDto> target = new ArrayList<>();
-        Iterable<Individual> sourceList = individualRepository.findAll();
+        Iterable<Individual> sourceList = this.individualRepository.findAll();
         for(Individual source: sourceList) {
             target.add(convert(source, MAXDEPTH));
         }
 
         return target;
+    }
+
+    public boolean clearAll() {
+        try {
+            this.individualRepository.deleteAll();
+            this.familyRepository.deleteAll();
+            return true;
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean load(String path) {
+        var reader = new GedcomFileReader(this);
+        return reader.readFile(path);
     }
 
     public void update(IndividualDto person) {
@@ -76,6 +92,15 @@ public class TreeService {
 
         map(family, dbFamily, 2);
         familyRepository.save(dbFamily);
+    }
+
+    public void updateRelations(long familyId, ArrayList<Long> spouses, ArrayList<Long> children) {
+        var optFamily =  familyRepository.findById(familyId);
+
+        if (optFamily.isPresent()) {
+            Family family = optFamily.get();
+
+        } // else ignore
     }
 
     private IndividualDto convert(Individual source, int depth) {

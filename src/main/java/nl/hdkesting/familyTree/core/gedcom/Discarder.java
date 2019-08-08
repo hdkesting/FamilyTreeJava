@@ -7,7 +7,7 @@ import nl.hdkesting.familyTree.core.services.TreeService;
  */
 public class Discarder implements GedcomReader {
     @Override
-    public void processNextLine(String line) {
+    public void processNextLine(PropertyLine line) {
         // ignore
     }
 
