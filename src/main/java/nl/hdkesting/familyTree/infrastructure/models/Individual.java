@@ -1,7 +1,7 @@
 package nl.hdkesting.familyTree.infrastructure.models;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,13 +23,13 @@ public class Individual {
     private char sex; // 'M' or 'F'
 
     @Column(name = "birthdate")
-    private Date birthDate;
+    private LocalDate birthDate;
 
     @Column(name = "birthplace")
     private String birthPlace;
 
     @Column(name = "deathdate")
-    private Date deathDate;
+    private LocalDate deathDate;
 
     @Column(name = "deathplace")
     private String deathPlace;
@@ -80,17 +80,16 @@ public class Individual {
         this.sex = sex;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
     public void setBirthDate(int year, int month, int day) {
-        GregorianCalendar cal = new GregorianCalendar(year, month, day);
-        this.birthDate = cal.getTime();
+        this.birthDate = LocalDate.of(year, month, day);
     }
 
     public String getBirthPlace() {
@@ -101,11 +100,11 @@ public class Individual {
         this.birthPlace = birthPlace;
     }
 
-    public Date getDeathDate() {
+    public LocalDate getDeathDate() {
         return deathDate;
     }
 
-    public void setDeathDate(Date deathDate) {
+    public void setDeathDate(LocalDate deathDate) {
         this.deathDate = deathDate;
     }
 

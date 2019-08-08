@@ -10,6 +10,9 @@ public class IndividualReader implements GedcomReader {
     private final IndividualDto individual;
     private static final Pattern idPattern = Pattern.compile("\\w@I(\\d+)@\\w");
 
+    private boolean inBirth;
+    private boolean inDeath;
+
     public IndividualReader(String line) {
         // line: "0 @I123@ INDI"
         this.individual = new IndividualDto();

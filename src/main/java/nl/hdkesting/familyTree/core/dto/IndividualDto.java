@@ -1,6 +1,6 @@
 package nl.hdkesting.familyTree.core.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -9,9 +9,9 @@ public class IndividualDto {
     private String firstNames;
     private String lastName;
     private Sex sex;
-    private Date birthDate;
+    private LocalDate birthDate;
     private String birthPlace;
-    private Date deathDate;
+    private LocalDate deathDate;
     private String deathPlace;
     private Set<FamilyDto> spouseFamilies = new HashSet<>();
     private Set<FamilyDto> childFamilies = new HashSet<>();
@@ -48,11 +48,11 @@ public class IndividualDto {
         this.sex = sex;
     }
 
-    public Date getBirthDate() {
+    public LocalDate getBirthDate() {
         return birthDate;
     }
 
-    public void setBirthDate(Date birthDate) {
+    public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
 
@@ -64,11 +64,11 @@ public class IndividualDto {
         this.birthPlace = birthPlace;
     }
 
-    public Date getDeathDate() {
+    public LocalDate getDeathDate() {
         return deathDate;
     }
 
-    public void setDeathDate(Date deathDate) {
+    public void setDeathDate(LocalDate deathDate) {
         this.deathDate = deathDate;
     }
 

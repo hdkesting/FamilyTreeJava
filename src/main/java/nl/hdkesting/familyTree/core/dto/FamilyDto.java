@@ -1,14 +1,14 @@
 package nl.hdkesting.familyTree.core.dto;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
 public class FamilyDto {
     private Long id;
-    private Date marriageDate;
+    private LocalDate marriageDate;
     private String marriagePlace;
-    private Date divorceDate;
+    private LocalDate divorceDate;
     private String divorcePlace;
     private Set<IndividualDto> spouses = new HashSet<>();
     private Set<IndividualDto> children = new HashSet<>();
@@ -21,11 +21,11 @@ public class FamilyDto {
         this.id = id;
     }
 
-    public Date getMarriageDate() {
+    public LocalDate getMarriageDate() {
         return marriageDate;
     }
 
-    public void setMarriageDate(Date marriageDate) {
+    public void setMarriageDate(LocalDate marriageDate) {
         this.marriageDate = marriageDate;
     }
 
@@ -37,11 +37,11 @@ public class FamilyDto {
         this.marriagePlace = marriagePlace;
     }
 
-    public Date getDivorceDate() {
+    public LocalDate getDivorceDate() {
         return divorceDate;
     }
 
-    public void setDivorceDate(Date divorceDate) {
+    public void setDivorceDate(LocalDate divorceDate) {
         this.divorceDate = divorceDate;
     }
 

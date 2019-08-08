@@ -2,7 +2,7 @@ package nl.hdkesting.familyTree.infrastructure.models;
 
 
 import javax.persistence.*;
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,13 +15,13 @@ public class Family {
     private Long id;
 
     @Column(name = "marriagedate")
-    private Date marriageDate;
+    private LocalDate marriageDate;
 
     @Column(name = "marriageplace")
     private String marriagePlace;
 
     @Column(name = "divorcedate")
-    private Date divorceDate;
+    private LocalDate divorceDate;
 
     @Column(name = "divorceplace")
     private String divorcePlace;
@@ -64,19 +64,17 @@ public class Family {
         this.id = id;
     }
 
-    public Date getMarriageDate() {
+    public LocalDate getMarriageDate() {
         return marriageDate;
     }
 
-    public void setMarriageDate(Date marriageDate) {
+    public void setMarriageDate(LocalDate marriageDate) {
         this.marriageDate = marriageDate;
     }
 
     public void setMarriageDate(int year, int month, int day) {
-        GregorianCalendar cal = new GregorianCalendar(year, month, day);
-        this.marriageDate = cal.getTime();
+        this.marriageDate = LocalDate.of(year, month, day);
     }
-
 
     public String getMarriagePlace() {
         return marriagePlace;
@@ -86,11 +84,11 @@ public class Family {
         this.marriagePlace = marriagePlace;
     }
 
-    public Date getDivorceDate() {
+    public LocalDate getDivorceDate() {
         return divorceDate;
     }
 
-    public void setDivorceDate(Date divorceDate) {
+    public void setDivorceDate(LocalDate divorceDate) {
         this.divorceDate = divorceDate;
     }
 
