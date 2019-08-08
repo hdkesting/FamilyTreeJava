@@ -99,7 +99,7 @@ public class TreeService {
 
         if (optFamily.isPresent()) {
             Family family = optFamily.get();
-
+            // TODO check against stored relations, update where needed
         } // else ignore
     }
 
