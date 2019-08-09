@@ -94,14 +94,75 @@ public class TreeService {
         familyRepository.save(dbFamily);
     }
 
-    public void updateRelations(long familyId, ArrayList<Long> spouses, ArrayList<Long> children) {
+    public void updateRelations(long familyId, ArrayList<Long> spouseIds, ArrayList<Long> childIds) {
         var optFamily =  familyRepository.findById(familyId);
 
         if (optFamily.isPresent()) {
+            // check against stored relations, update where needed
             Family family = optFamily.get();
-            // TODO check against stored relations, update where needed
+
+            // check for spouses to remove
+            Set<Individual> spouses = family.getSpouses();
+            for (Individual spouse : spouses) {
+                boolean found = false;
+                long spouseId = spouse.getId();
+                for (long id : spouseIds) {
+                    found = found || id == spouseId;
+                }
+
+                if (!found) {
+                    spouses.remove(spouse); // can I modify the list?
+                }
+            }
+
+            // check for spouses to add
+            for (long id : spouseIds) {
+                boolean found = false;
+                for (Individual spouse : spouses) {
+                    found = found || id == spouse.getId();
+                }
+
+                if (!found) {
+                    var newspouse = this.individualRepository.findById(id);
+                    if (newspouse.isPresent()){
+                        spouses.add(newspouse.get());
+                    }
+                }
+            }
+
+            // check for children to remove
+            Set<Individual> children = family.getChildren();
+            for (Individual child : children) {
+                boolean found = false;
+                long childId = child.getId();
+                for (long id : childIds) {
+                    found = found || id == childId;
+                }
+
+                if (!found) {
+                    children.remove(child);
+                }
+            }
+
+            // check for children to add
+            for (long id : childIds) {
+                boolean found = false;
+                for (Individual child : children) {
+                    found = found || id == child.getId();
+                }
+
+                if (!found) {
+                    var newchild = this.individualRepository.findById(id);
+                    if (newchild.isPresent()){
+                        children.add(newchild.get());
+                    }
+                }
+            }
+
+            familyRepository.save(family);
         } // else ignore
     }
+
 
     private IndividualDto convert(Individual source, int depth) {
         IndividualDto target = getNewIndividualDto(source.getId());
