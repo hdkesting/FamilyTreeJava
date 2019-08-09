@@ -37,10 +37,12 @@ public class FamilyReader implements GedcomReader {
                 break;
             case "DATE":
                 GedcomDate dt = GedcomDate.parse(line.getValue());
-                if (inMarriage) {
-                    this.family.setMarriageDate(dt.getDate());
-                } else if (inDivorce) {
-                    this.family.setDivorceDate(dt.getDate());
+                if (dt != null) {
+                    if (inMarriage) {
+                        this.family.setMarriageDate(dt.getDate());
+                    } else if (inDivorce) {
+                        this.family.setDivorceDate(dt.getDate());
+                    }
                 }
                 break;
             case "PLAC":

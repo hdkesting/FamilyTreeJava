@@ -58,10 +58,12 @@ public class IndividualReader implements GedcomReader {
                 break;
             case "DATE":
                 GedcomDate dt = GedcomDate.parse(line.getValue());
-                if (inBirth) {
-                    this.individual.setBirthDate(dt.getDate());
-                } else if (inDeath) {
-                    this.individual.setDeathDate(dt.getDate());
+                if (dt != null) {
+                    if (inBirth) {
+                        this.individual.setBirthDate(dt.getDate());
+                    } else if (inDeath) {
+                        this.individual.setDeathDate(dt.getDate());
+                    }
                 }
                 break;
             case "PLAC":

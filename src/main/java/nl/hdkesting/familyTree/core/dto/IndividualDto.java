@@ -8,7 +8,7 @@ public class IndividualDto {
     private Long id;
     private String firstNames;
     private String lastName;
-    private Sex sex;
+    private Sex sex = Sex.Unknown;
     private LocalDate birthDate;
     private String birthPlace;
     private LocalDate deathDate;

@@ -254,6 +254,8 @@ public class TreeService {
             case Female:
                 toDbPerson.setSex(FEMALE_CHAR);
                 break;
+            default:
+                toDbPerson.setSex('?');
         }
 
         toDbPerson.setBirthDate(fromDtoPerson.getBirthDate());
@@ -275,6 +277,8 @@ public class TreeService {
             case FEMALE_CHAR:
                 toDtoPerson.setSex(Sex.Female);
                 break;
+            default:
+                toDtoPerson.setSex(Sex.Unknown);
         }
 
         toDtoPerson.setBirthDate(fromDbPerson.getBirthDate());

@@ -26,7 +26,7 @@ public class InitializationController {
 
     @GetMapping(path = "/load")
     public @ResponseBody String loadAll() {
-        String path = "static/sampleFamily.ged";
+        String path = "static/family.ged";
         if (this.treeService.load(path)) {
             return "File " + path + " is loaded.";
         }
