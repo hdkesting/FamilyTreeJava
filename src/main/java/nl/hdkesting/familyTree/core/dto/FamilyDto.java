@@ -1,5 +1,7 @@
 package nl.hdkesting.familyTree.core.dto;
 
+import org.springframework.context.annotation.Bean;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;

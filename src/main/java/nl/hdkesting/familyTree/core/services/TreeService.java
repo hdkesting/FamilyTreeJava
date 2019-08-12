@@ -3,6 +3,7 @@ package nl.hdkesting.familyTree.core.services;
 import nl.hdkesting.familyTree.core.dto.FamilyDto;
 import nl.hdkesting.familyTree.core.dto.IndividualDto;
 import nl.hdkesting.familyTree.core.dto.Sex;
+import nl.hdkesting.familyTree.core.dto.Summary;
 import nl.hdkesting.familyTree.infrastructure.models.Family;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
 import nl.hdkesting.familyTree.infrastructure.repositories.FamilyRepository;
@@ -163,6 +164,16 @@ public class TreeService {
         } // else ignore
     }
 
+    public Summary getSummary() {
+        var sum = new Summary();
+
+        sum.setIndividualCount(this.individualRepository.count());
+        sum.setFamilyCount(this.familyRepository.count());
+
+        // TODO spouses and children, aka relations
+
+        return sum;
+    }
 
     private IndividualDto convert(Individual source, int depth) {
         IndividualDto target = getNewIndividualDto(source.getId());
