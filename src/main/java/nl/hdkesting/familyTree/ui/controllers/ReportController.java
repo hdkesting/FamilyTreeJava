@@ -1,11 +1,13 @@
 package nl.hdkesting.familyTree.ui.controllers;
 
 import nl.hdkesting.familyTree.core.services.TreeService;
+import nl.hdkesting.familyTree.ui.controllers.viewModels.SummaryVm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
+@RequestMapping("/report")
 public class ReportController {
     private final TreeService treeService;
 
@@ -15,7 +17,8 @@ public class ReportController {
 
     @RequestMapping("/summary")
     public String getSummary(Model model) {
-        model.addAttribute("summary", this.treeService.getSummary());
+        SummaryVm vm = new SummaryVm(this.treeService.getSummary());
+        model.addAttribute("summary", vm);
 
         return "summary";
     }
