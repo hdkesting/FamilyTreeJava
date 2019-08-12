@@ -6,6 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 @Controller
 @RequestMapping(path="/init")
 public class InitializationController {
@@ -26,7 +30,16 @@ public class InitializationController {
 
     @GetMapping(path = "/load")
     public @ResponseBody String loadAll() {
-        String path = "static/source/family.ged";
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        Properties props = new Properties();
+        try (InputStream resourceStream = loader.getResourceAsStream("application.properties")) {
+            props.load(resourceStream);
+        } catch (IOException ex) {
+            ex.printStackTrace();
+            return "Cannot read props";
+        }
+
+        String path = "static/source/" + props.getProperty("gedcom.source");
         if (this.treeService.load(path)) {
             return "File " + path + " is loaded.";
         }
