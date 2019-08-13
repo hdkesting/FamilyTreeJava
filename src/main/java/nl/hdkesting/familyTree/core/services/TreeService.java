@@ -23,8 +23,9 @@ public class TreeService {
     private final FamilyRepository familyRepository;
     private final IndividualRepository individualRepository;
 
-    // @Autowired
-    public TreeService(FamilyRepository familyRepository, IndividualRepository individualRepository) {
+    public TreeService(
+            FamilyRepository familyRepository,
+            IndividualRepository individualRepository) {
         this.familyRepository = familyRepository;
         this.individualRepository = individualRepository;
     }
@@ -169,8 +170,8 @@ public class TreeService {
 
         sum.setIndividualCount(this.individualRepository.count());
         sum.setFamilyCount(this.familyRepository.count());
-
-        // TODO spouses and children, aka relations
+        sum.setSpouseCount(this.familyRepository.getSpousesCount());
+        sum.setChildCount(this.familyRepository.getChildrenCount());
 
         return sum;
     }

@@ -9,9 +9,9 @@
     <link rel="stylesheet" href="/css/familytree.css" />
 </head>
 <body>
-    <header>
-        <h1>GEDCOM summary</h1>
-    </header>
+<header th:replace="fragments/layout :: header">
+    <h1>header</h1>
+</header>
 
     <div class="container">
         <table class="table">
@@ -30,19 +30,26 @@
                 <td>Families</td>
                 <td th:text="${summary.familyCount}">0</td>
             </tr>
+            <tr>
+                <td>Spouse relations</td>
+                <td th:text="${summary.spouseCount}">?</td>
+            </tr>
+            <tr>
+                <td>Child relations</td>
+                <td th:text="${summary.childCount}">?</td>
+            </tr>
 
             </tbody>
         </table>
+
+        <p>The "Persons" are the various individuals that are registered in the system. Relations between individuals are registered in "Families".
+        A person can be registered as "child" or as "spouse" in a particular family. Of course he or she will be child in one real family
+            (although that family may not be registered here) and may be spouse in another family (or more).
+        </p>
     </div>
 
-    <footer>
-        Family Tree, created as a Java learning project by Hans Kesting.
+    <footer th:replace="fragments/layout :: footer">
+        Family Tree &copy; 2019 Hans Kesting.
     </footer>
-
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
 </body>
 </html>
