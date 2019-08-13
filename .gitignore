@@ -42,4 +42,4 @@ build/
 
 ### VS Code ###
 .vscode/
-src/main/resources/static/source/family.ged
+src/main/resources/source/family.ged

@@ -4,6 +4,7 @@ import nl.hdkesting.familyTree.core.services.TreeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @Controller
 public class GeneaController {
@@ -13,10 +14,16 @@ public class GeneaController {
         this.treeService = treeService;
     }
 
-    @GetMapping(name = "/familynames")
+    @GetMapping(path = "/familynames")
     public String getAllFamilyNames(Model model) {
         model.addAttribute("names", this.treeService.getLastNames());
 
         return "familynames";
+    }
+
+    @GetMapping(path = "/names/{name}")
+    public String getFamily(@PathVariable String name) {
+
+        return "names: " + name; // fails because it cannot find the template (of course)
     }
 }

@@ -86,8 +86,13 @@ public class IndividualReader implements GedcomReader {
     private void processName(String fullName) {
         // fullName is like "first name /lastname/", so split in "first name" and "lastname"
         int p1 = fullName.indexOf("/");
-        this.individual.setFirstNames(fullName.substring(0, p1-1).trim());
+        String name = fullName.substring(0, p1-1).trim();
+        this.individual.setFirstNames(name);
         int p2 = fullName.indexOf("/", p1+1);
-        this.individual.setLastName(fullName.substring(p1+1, p2));
+        name = fullName.substring(p1+1, p2);
+        if (name.startsWith("??")) {
+            name = "??";
+        }
+        this.individual.setLastName(name);
     }
 }

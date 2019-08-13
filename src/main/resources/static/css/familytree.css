@@ -9,3 +9,7 @@ header {
 footer {
     padding-top: 20px;
 }
+
+ul.lastnames {
+    column-width: 15em;
+}

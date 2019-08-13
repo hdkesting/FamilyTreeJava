@@ -39,7 +39,7 @@ public class InitializationController {
             return "Cannot read props";
         }
 
-        String path = "static/source/" + props.getProperty("gedcom.source");
+        String path = "source/" + props.getProperty("gedcom.source");
         if (this.treeService.load(path)) {
             return "File " + path + " is loaded.";
         }
