@@ -1,4 +1,4 @@
-package nl.hdkesting.familyTree.ui.controllers.viewModels;
+package nl.hdkesting.familyTree.ui.viewModels;
 
 import nl.hdkesting.familyTree.core.dto.Summary;
 

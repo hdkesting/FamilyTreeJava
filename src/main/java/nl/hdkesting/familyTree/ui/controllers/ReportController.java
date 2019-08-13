@@ -1,7 +1,7 @@
 package nl.hdkesting.familyTree.ui.controllers;
 
 import nl.hdkesting.familyTree.core.services.TreeService;
-import nl.hdkesting.familyTree.ui.controllers.viewModels.SummaryVm;
+import nl.hdkesting.familyTree.ui.viewModels.SummaryVm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
