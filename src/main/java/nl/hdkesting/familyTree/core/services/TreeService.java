@@ -1,9 +1,6 @@
 package nl.hdkesting.familyTree.core.services;
 
-import nl.hdkesting.familyTree.core.dto.FamilyDto;
-import nl.hdkesting.familyTree.core.dto.IndividualDto;
-import nl.hdkesting.familyTree.core.dto.Sex;
-import nl.hdkesting.familyTree.core.dto.Summary;
+import nl.hdkesting.familyTree.core.dto.*;
 import nl.hdkesting.familyTree.infrastructure.models.Family;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
 import nl.hdkesting.familyTree.infrastructure.repositories.FamilyRepository;
@@ -11,6 +8,7 @@ import nl.hdkesting.familyTree.infrastructure.repositories.IndividualRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -174,6 +172,10 @@ public class TreeService {
         sum.setChildCount(this.familyRepository.getChildrenCount());
 
         return sum;
+    }
+
+    public List<NameCount> getLastNames() {
+        return this.individualRepository.getLastNames();
     }
 
     private IndividualDto convert(Individual source, int depth) {
