@@ -12,7 +12,7 @@
         </p>
         <p>
             <ul class="names">
-                <li th:each="name : ${names}"><a href="/names/" th:attrappend="href=${name.getLastName()}" th:text="${name.toString()}"></a></li>
+                <li th:each="name : ${names}"><a href="/names/" th:attrappend="href=${name.getLastName()}" th:text="${name.getLastName()}"></a> (<span th:text="${name.getCount()}"></span>)</li>
             </ul>
         </p>
     </div>
