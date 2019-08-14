@@ -1,19 +1,12 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/baselayout}">
 <head>
-    <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <title>Summary of family tree</title>
-    <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-    <link rel="stylesheet" href="/css/familytree.css" />
+    <title>List of last names - Family Tree</title>
 </head>
 <body>
-    <header th:replace="fragments/layout :: header">
-        <h1>header</h1>
-    </header>
 
-    <div class="container">
+    <div layout:fragment="content">
         <p>
         All known last names.
         </p>
@@ -24,8 +17,5 @@
         </p>
     </div>
 
-    <footer th:replace="fragments/layout :: footer">
-        Family Tree &copy; 2019 Hans Kesting.
-    </footer>
 </body>
 </html>
