@@ -184,7 +184,7 @@ public class TreeService {
 
         List<IndividualDto> result = new ArrayList<>(list.size());
         for (Individual indi : list) {
-            IndividualDto dto = new IndividualDto();
+            IndividualDto dto = getNewIndividualDto(indi.getId());
             map(indi, dto, 1);
             result.add(dto);
         }

@@ -99,4 +99,12 @@ public class IndividualDto {
     public String getFullName() {
         return getFirstNames() + " " + getLastName();
     }
+
+    public boolean isMale() {
+        return this.getSex() == Sex.Male;
+    }
+
+    public boolean isFemale() {
+        return this.getSex() == Sex.Female;
+    }
 }

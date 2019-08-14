@@ -31,4 +31,10 @@ public class GeneaController {
         model.addAttribute("name", name);
         return "names";
     }
+
+    @GetMapping(path = "/person/{id}")
+    public String getPerson(@PathVariable long id, Model model) {
+
+        return "person";
+    }
 }
