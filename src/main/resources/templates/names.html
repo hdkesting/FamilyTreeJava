@@ -12,8 +12,8 @@
             <div th:each="person : ${persons}">
                 <p>
                     <a href="/person/" th:attrappend="href=${person.getId()}" th:text="${person.getFirstNames()}"></a>
-                    <strong th:if="${person.isMale()}">&male;</strong>
-                    <strong th:if="${person.isFemale()}">&female;</strong>
+                    <strong th:if="${person.isMale()}">&male;👨</strong>
+                    <strong th:if="${person.isFemale()}">&female;👩</strong>
                 </p>
                 <p th:if="${person.getBirthDate() != null}">✤ <span th:text="${person.getBirthDate()}"></span> <span th:text="${person.getBirthPlace()}"></span></p>
                 <p th:if="${person.getDeathDate() != null}">&dagger; <span th:text="${person.getDeathDate()}"></span> <span th:text="${person.getDeathPlace()}"></span></p>
