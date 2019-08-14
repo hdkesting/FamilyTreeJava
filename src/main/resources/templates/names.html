@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/baselayout}">
+<head>
+    <title>Family list  - Family Tree</title>
+</head>
+<body>
+    <div layout:fragment="content">
+        <p><a href="/familynames">Back to overview</a></p>
+        <h1>Family <q><strong th:text="${name}"></strong></q></h1>
+        <div class="persons">
+            <div th:each="person : ${persons}">
+                <p th:text="${person.getFirstNames()}"></p>
+                <p th:if="${person.getBirthDate() != null}">✤ <span th:text="${person.getBirthDate()}"></span> <span th:text="${person.getBirthPlace()}"></span></p>
+                <p th:if="${person.getDeathDate() != null}">&dagger; <span th:text="${person.getDeathDate()}"></span> <span th:text="${person.getDeathPlace()}"></span></p>
+            </div>
+        </div>
+        <p><a href="/familynames">Back to overview</a></p>
+    </div>
+</body>
+</html>

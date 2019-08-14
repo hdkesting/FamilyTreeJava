@@ -11,7 +11,7 @@
         All known last names.
         </p>
         <p>
-            <ul class="lastnames">
+            <ul class="names">
                 <li th:each="name : ${names}"><a href="/names/" th:attrappend="href=${name.getLastName()}" th:text="${name.toString()}"></a></li>
             </ul>
         </p>

@@ -95,4 +95,8 @@ public class IndividualDto {
     public void setChildFamilies(Set<FamilyDto> childFamilies) {
         this.childFamilies = childFamilies;
     }
+
+    public String getFullName() {
+        return getFirstNames() + " " + getLastName();
+    }
 }

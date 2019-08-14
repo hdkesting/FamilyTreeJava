@@ -5,6 +5,7 @@ import nl.hdkesting.familyTree.infrastructure.models.Family;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
 import nl.hdkesting.familyTree.infrastructure.repositories.FamilyRepository;
 import nl.hdkesting.familyTree.infrastructure.repositories.IndividualRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -176,6 +177,19 @@ public class TreeService {
 
     public List<NameCount> getLastNames() {
         return this.individualRepository.getLastNames();
+    }
+
+    public List<IndividualDto> getAllByLastname(String lastName) {
+        List<Individual> list = this.individualRepository.findByLastName(lastName, new Sort(new String[] {"birthDate", "deathDate", "lastName", "firstNames"}));
+
+        List<IndividualDto> result = new ArrayList<>(list.size());
+        for (Individual indi : list) {
+            IndividualDto dto = new IndividualDto();
+            map(indi, dto, 1);
+            result.add(dto);
+        }
+
+        return result;
     }
 
     private IndividualDto convert(Individual source, int depth) {

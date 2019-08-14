@@ -10,6 +10,23 @@ footer {
     padding-top: 20px;
 }
 
-ul.lastnames {
+ul.names {
     column-width: 15em;
+}
+
+div.persons {
+    display:flex;
+    flex-wrap: wrap;
+}
+
+div.persons div {
+     flex-basis: auto;
+     border: 1px solid black;
+     border-radius: 1px;
+     margin: 2px;
+     padding: 0 5px;
+}
+
+div.persons div p:first-of-type {
+     font-weight: bold;
 }
