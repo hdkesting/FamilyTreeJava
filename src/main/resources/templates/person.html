@@ -2,11 +2,54 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/baselayout}">
 <head>
-    <title>Person  - Family Tree</title>
+    <title><q th:text="${person.primary.getFullName()}" th:remove="tag"></q> - Family Tree</title>
 </head>
 <body>
     <div layout:fragment="content">
-        TODO
+        <p>
+            Back to <a href="/names/" th:attrappend="href=${person.primary.lastName}" th:text="${person.primary.lastName}"></a>.
+        </p>
+
+        <h1>Information about <span th:text="${person.primary.getFullName()}" th:remove="tag">{person}</span></h1>
+
+        <h2>Descent</h2>
+        <table class="table">
+            <tr>
+                <td colspan="4">
+                    primary + siblings
+                </td>
+            </tr>
+            <tr>
+                <td colspan="2">
+                    father
+                </td>
+                <td colspan="2">
+                    mother
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    paternal grandfather
+                </td>
+                <td>
+                    paternal grandmother
+                </td>
+                <td>
+                    maternal grandfather
+                </td>
+                <td>
+                    maternal grandmother
+                </td>
+            </tr>
+        </table>
+
+        <h2>marriage(s)</h2>
+        <p>
+            married to {other person}, {date} {place}. divorced {date} {place}
+        </p>
+        <p>
+            children ...
+        </p>
     </div>
 </body>
 </html>
