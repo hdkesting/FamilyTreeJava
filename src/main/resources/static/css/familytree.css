@@ -30,3 +30,19 @@ div.persons div {
 div.persons div p:first-of-type {
      font-weight: bold;
 }
+
+table.pedigree td {
+    text-align: center;
+}
+
+table.pedigree tr:first-of-type div div {
+    float: left;   
+}
+
+table.pedigree div.primary {
+    background-color: silver;
+}
+
+table.pedigree div.sibling {
+    color: darkgrey;
+}

@@ -36,4 +36,12 @@ public class IndividualVm {
     public String getFullName() {
         return firstNames + " " + lastName;
     }
+
+    public boolean isMale() {
+        return this.sex == 'M';
+    }
+
+    public boolean isFemale() {
+        return this.sex == 'F';
+    }
 }

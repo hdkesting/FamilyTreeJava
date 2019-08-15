@@ -2,7 +2,7 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Standard blocks</title>
 </head>
 <body>
 
@@ -12,15 +12,28 @@
     </div>
 </header>
 
-<footer th:fragment="footer">
-    Family Tree, created as a Java learning project. &copy; 2019 Hans Kesting.
-    <!-- Optional JavaScript -->
-    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js" integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js" integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm" crossorigin="anonymous"></script>
-</footer>
+<!--
+    parameter person is of type IndividualVm
+    parameter css is css class
+ -->
+<div th:fragment="personblock(person, css)" th:if="${person} != null" th:class="${css}">
+    <p>
+        <a href="/person/" th:attrappend="href=${person.id}" th:text="${person.getFullName()}"></a>
+        <strong th:if="${person.isMale()}">&male;👨</strong>
+        <strong th:if="${person.isFemale()}">&female;👩</strong>
+    </p>
+    <p th:if="${person.birthDate != null}">✤ <span th:text="${person.birthDate}"></span> <span th:text="${person.birthPlace}"></span></p>
+    <p th:if="${person.deathDate != null}">&dagger; <span th:text="${person.deathDate}"></span> <span th:text="${person.deathPlace}"></span></p>
+</div>
 
+<!-- parameter person is of type IndividualVm -->
+<span th:fragment="personline(person)">
+    <a href="/person/" th:attrappend="href=${person.id}" th:text="${person.getFullName()}"></a>
+    <strong th:if="${person.isMale()}">&male;👨</strong>
+    <strong th:if="${person.isFemale()}">&female;👩</strong>
+    <p th:if="${person.birthDate != null}" th:remove="tag">, ✤ <span th:text="${person.birthDate}" th:remove="tag"></span> <span th:text="${person.birthPlace}" th:remove="tag"></span></p>
+    <p th:if="${person.deathDate != null}" th:remove="tag">, &dagger; <span th:text="${person.deathDate}" th:remove="tag"></span> <span th:text="${person.deathPlace}" th:remove="tag"></span></p>
+</span>
 
 </body>
 </html>

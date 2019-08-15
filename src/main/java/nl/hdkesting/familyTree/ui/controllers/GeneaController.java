@@ -1,5 +1,6 @@
 package nl.hdkesting.familyTree.ui.controllers;
 
+import nl.hdkesting.familyTree.core.dto.FamilyDto;
 import nl.hdkesting.familyTree.core.dto.IndividualDto;
 import nl.hdkesting.familyTree.core.services.TreeService;
 import nl.hdkesting.familyTree.ui.viewModels.IndividualVm;
@@ -44,7 +45,29 @@ public class GeneaController {
             return "redirect:/familynames";
         }
 
-        person.primary = new IndividualVm(opt.get());
+        IndividualDto primary = opt.get();
+        person.primary = new IndividualVm(primary);
+
+        if (primary.getChildFamilies().size() > 0) {
+            // use only first one for siblings and (grand)parents
+            FamilyDto fam = primary.getChildFamilies().iterator().next();
+            for (IndividualDto sibling: fam.getChildren()) {
+                if (sibling.getId() != primary.getId()) {
+                    person.siblings.add(new IndividualVm(sibling));
+                }
+            }
+
+            for (IndividualDto prnt : fam.getSpouses()) {
+                if (prnt.isMale()) {
+                    person.parents[0] = new IndividualVm(prnt);
+                    // TODO paternal grandparents
+                } else {
+                    // assume isFemale
+                    person.parents[1] = new IndividualVm(prnt);
+                    // TODO maternal grandparents
+                }
+            }
+        }
 
         model.addAttribute("person", person);
         return "person";

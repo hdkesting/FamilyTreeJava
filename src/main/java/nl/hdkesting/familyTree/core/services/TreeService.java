@@ -270,6 +270,17 @@ public class TreeService {
         depth--;
         if (depth <= 0) return;
 
+        var sourceSpouses = fromDbFamily.getSpouses();
+        var targetSpouses = toDtoFamily.getSpouses();
+        for (Individual source : sourceSpouses) {
+            targetSpouses.add(convert(source, depth));
+        }
+
+        var sourceChildren = fromDbFamily.getChildren();
+        var targetChildren = toDtoFamily.getChildren();
+        for (Individual source : sourceChildren) {
+            targetChildren.add(convert(source, depth));
+        }
     }
 
     private void map(IndividualDto fromDtoPerson, Individual toDbPerson, int depth) {
@@ -293,6 +304,8 @@ public class TreeService {
 
         depth--;
         if (depth <= 0) return;
+
+        // TODO
     }
 
     private void map(Individual fromDbPerson, IndividualDto  toDtoPerson, int depth) {

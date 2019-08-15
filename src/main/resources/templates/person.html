@@ -13,18 +13,23 @@
         <h1>Information about <span th:text="${person.primary.getFullName()}" th:remove="tag">{person}</span></h1>
 
         <h2>Descent</h2>
-        <table class="table">
+        <table class="table pedigree">
             <tr>
                 <td colspan="4">
-                    primary + siblings
+                    <div>
+                    <div th:replace="fragments/layout :: personblock(${person.primary}, 'primary')">primary</div>
+                    <q th:each="sibling : ${person.siblings}" th:remove="tag">
+                        <div th:replace="fragments/layout :: personblock(${sibling}, 'sibling')">sibling</div>
+                    </q>
+                    </div>
                 </td>
             </tr>
             <tr>
                 <td colspan="2">
-                    father
+                    <div th:replace="fragments/layout :: personblock(${person.parents[0]}, 'parent')">father</div>
                 </td>
                 <td colspan="2">
-                    mother
+                    <div th:replace="fragments/layout :: personblock(${person.parents[1]}, 'parent')">mother</div>
                 </td>
             </tr>
             <tr>
