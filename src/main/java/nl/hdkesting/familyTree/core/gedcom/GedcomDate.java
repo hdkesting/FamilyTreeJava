@@ -4,6 +4,10 @@ import java.time.LocalDate;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * A parser for the (possibly incomplete) dates that appear in a GEDCOM file.
+ * It ignores the possibility of non-Gregorian calendars.
+ */
 public class GedcomDate {
     private static final Pattern dmyPattern = Pattern.compile("\\d{1,2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec) \\d{4}");
     private static final Pattern myPattern = Pattern.compile("(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \\d{4}");
@@ -13,6 +17,11 @@ public class GedcomDate {
     private LocalDate date;
     private boolean isExact;
 
+    /**
+     * Private constructor, accessed through factory method {@link GedcomDate#parse}.
+     * @param date - the parsed date
+     * @param isExact - whether the date was specified fully (day-month-year)
+     */
     private GedcomDate(LocalDate date, boolean isExact) {
         this.date = date;
         this.isExact = isExact;

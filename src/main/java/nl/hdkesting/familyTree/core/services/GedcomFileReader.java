@@ -6,14 +6,27 @@ import org.springframework.stereotype.Service;
 import java.io.*;
 import java.net.URL;
 
+/**
+ * Reader for a GEDCOM file. The various objects will be stored through the supplied TreeService.
+ */
 @Service
 public class GedcomFileReader {
     private final TreeService treeService;
 
+    /**
+     * Creates a new reader.
+     * @param treeService
+     */
     public GedcomFileReader(TreeService treeService) {
+        if (treeService == null) throw new IllegalArgumentException("treeService may not be null.");
         this.treeService = treeService;
     }
 
+    /**
+     * Reads the file from a resource, as specified by the path.
+     * @param path
+     * @return true if it was successful.
+     */
     public boolean readFile(String path) {
         ClassLoader classLoader = getClass().getClassLoader();
         URL resource = classLoader.getResource(path);
@@ -21,6 +34,10 @@ public class GedcomFileReader {
             return false;
         }
 
+        /* assumptions:
+            - the database was empty or was loaded from this same file: an ID is unique only within one file.
+            - the INDI records go first, so that the references in the FAM records point to existing records.
+         */
         File file = new File(resource.getFile());
 
         try (
@@ -44,6 +61,7 @@ public class GedcomFileReader {
                             objectReader = new FamilyReader(pline);
                             break;
                         default:
+                            // HEAD, TRLR, SOUR, NOTE, ...
                             objectReader = new Discarder();
                             break;
                     }
