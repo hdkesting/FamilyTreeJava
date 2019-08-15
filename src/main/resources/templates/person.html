@@ -13,9 +13,10 @@
         <h1>Information about <span th:text="${person.primary.getFullName()}" th:remove="tag">{person}</span></h1>
 
         <h2>Descent</h2>
-        <table class="table pedigree">
+        <table class="table table-bordered pedigree">
             <tr>
-                <td colspan="4">
+                <td colspan="2">
+                    <!-- primary + siblings -->
                     <div>
                     <div th:replace="fragments/layout :: personblock(${person.primary}, 'primary')">primary</div>
                     <q th:each="sibling : ${person.siblings}" th:remove="tag">
@@ -26,35 +27,40 @@
             </tr>
             <tr>
                 <td colspan="2">
-                    <div th:replace="fragments/layout :: personblock(${person.parents[0]}, 'parent')">father</div>
-                </td>
-                <td colspan="2">
-                    <div th:replace="fragments/layout :: personblock(${person.parents[1]}, 'parent')">mother</div>
+                    <div>
+                        <div th:replace="fragments/layout :: personblock(${person.family.husband}, 'parent')">father</div>
+                        <div th:replace="fragments/layout :: familyblock(${person.family})"></div>
+                        <div th:replace="fragments/layout :: personblock(${person.family.wife}, 'parent')">mother</div>
+                    </div>
                 </td>
             </tr>
             <tr>
                 <td>
-                    paternal grandfather
+                    <div>
+                        <div th:replace="fragments/layout :: personblock(${person.paternalGrandparents.husband}, 'parent')">paternal grandfather</div>
+                        <div th:replace="fragments/layout :: familyblock(${person.paternalGrandparents})"></div>
+                        <div th:replace="fragments/layout :: personblock(${person.paternalGrandparents.wife}, 'parent')">paternal grandmother</div>
+                    </div>
                 </td>
                 <td>
-                    paternal grandmother
-                </td>
-                <td>
-                    maternal grandfather
-                </td>
-                <td>
-                    maternal grandmother
+                    <div>
+                        <div th:replace="fragments/layout :: personblock(${person.maternalGrandparents.husband}, 'parent')">maternal grandfather</div>
+                        <div th:replace="fragments/layout :: familyblock(${person.maternalGrandparents})"></div>
+                        <div th:replace="fragments/layout :: personblock(${person.maternalGrandparents.wife}, 'parent')">maternal grandmother</div>
+                    </div>
                 </td>
             </tr>
         </table>
 
-        <h2>marriage(s)</h2>
+        <q th:if="${person.marriages.size()} > 0">
+        <h2>Marriage(s)</h2>
         <p>
             married to {other person}, {date} {place}. divorced {date} {place}
         </p>
         <p>
             children ...
         </p>
+        </q>
     </div>
 </body>
 </html>

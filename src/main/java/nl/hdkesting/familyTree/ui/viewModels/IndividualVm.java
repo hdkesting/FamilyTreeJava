@@ -9,7 +9,7 @@ import java.time.LocalDate;
  * ViewModel with basic data for a single individual.
  */
 public class IndividualVm {
-    public Long id;
+    public long id;
     public String firstNames;
     public String lastName;
     public char sex = ' '; // expected: 'M' or 'F'

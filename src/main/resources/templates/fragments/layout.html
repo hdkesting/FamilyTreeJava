@@ -35,5 +35,11 @@
     <p th:if="${person.deathDate != null}" th:remove="tag">, &dagger; <span th:text="${person.deathDate}" th:remove="tag"></span> <span th:text="${person.deathPlace}" th:remove="tag"></span></p>
 </span>
 
+<!-- parameter is of type FamilyVm -->
+<div th:fragment="familyblock(family)" th:if="${family} != null" class="marriage">
+    <p style="font-size: x-large">&times;</p>
+    <p th:if="${family.marriageDate} != null"><span title="Married">⚭</span> <span th:text="${family.marriageDate}"></span> <span th:text="${family.marriagePlace}"></span></p>
+    <p th:if="${family.divorceDate} != null"><span title="Divorced">⚮</span> <span th:text="${family.divorceDate}"></span> <span th:text="${family.divorcePlace}"></span></p>
+</div>
 </body>
 </html>

@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class IndividualDto {
-    private Long id;
+    private long id;
     private String firstNames;
     private String lastName;
     private Sex sex = Sex.Unknown;
@@ -16,11 +16,11 @@ public class IndividualDto {
     private Set<FamilyDto> spouseFamilies = new HashSet<>();
     private Set<FamilyDto> childFamilies = new HashSet<>();
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

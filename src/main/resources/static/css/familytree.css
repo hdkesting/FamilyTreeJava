@@ -39,10 +39,25 @@ table.pedigree tr:first-of-type div div {
     float: left;   
 }
 
+table.pedigree tr:nth-of-type(3) td {
+    width: 50%;
+}
+
 table.pedigree div.primary {
-    background-color: silver;
+    background-color: rgb(228, 228, 228);
 }
 
 table.pedigree div.sibling {
     color: darkgrey;
+    font-size: smaller;
+}
+
+table.pedigree div.parent {
+    width: 40%;
+    float: left;
+}
+
+table.pedigree div.marriage {
+    width: 20%;
+    float: left;
 }

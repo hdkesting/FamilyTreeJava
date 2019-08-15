@@ -3,8 +3,9 @@ package nl.hdkesting.familyTree.ui.controllers;
 import nl.hdkesting.familyTree.core.dto.FamilyDto;
 import nl.hdkesting.familyTree.core.dto.IndividualDto;
 import nl.hdkesting.familyTree.core.services.TreeService;
+import nl.hdkesting.familyTree.ui.viewModels.FamilyVm;
 import nl.hdkesting.familyTree.ui.viewModels.IndividualVm;
-import nl.hdkesting.familyTree.ui.viewModels.PersonVm;
+import nl.hdkesting.familyTree.ui.viewModels.PersonDetailsVm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +39,7 @@ public class GeneaController {
 
     @GetMapping(path = "/person/{id}")
     public String getPerson(@PathVariable long id, Model model) {
-        PersonVm person = new PersonVm();
+        PersonDetailsVm person = new PersonDetailsVm();
 
         Optional<IndividualDto> opt = this.treeService.getIndividualById(id);
         if (opt.isEmpty()) {
@@ -51,20 +52,23 @@ public class GeneaController {
         if (primary.getChildFamilies().size() > 0) {
             // use only first one for siblings and (grand)parents
             FamilyDto fam = primary.getChildFamilies().iterator().next();
-            for (IndividualDto sibling: fam.getChildren()) {
-                if (sibling.getId() != primary.getId()) {
-                    person.siblings.add(new IndividualVm(sibling));
-                }
-            }
+            person.family = new FamilyVm(fam);
+            person.setSiblings();
 
             for (IndividualDto prnt : fam.getSpouses()) {
                 if (prnt.isMale()) {
-                    person.parents[0] = new IndividualVm(prnt);
-                    // TODO paternal grandparents
+                    // paternal grandparents
+                    if (prnt.getChildFamilies().size() > 0) {
+                        FamilyDto f2 = prnt.getChildFamilies().iterator().next();
+                        person.paternalGrandparents = new FamilyVm(f2);
+                    }
                 } else {
                     // assume isFemale
-                    person.parents[1] = new IndividualVm(prnt);
-                    // TODO maternal grandparents
+                    // maternal grandparents
+                    if (prnt.getChildFamilies().size() > 0) {
+                        FamilyDto f2 = prnt.getChildFamilies().iterator().next();
+                        person.maternalGrandparents = new FamilyVm(f2);
+                    }
                 }
             }
         }

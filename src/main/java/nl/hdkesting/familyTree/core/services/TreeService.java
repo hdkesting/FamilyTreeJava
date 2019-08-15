@@ -17,7 +17,7 @@ import java.util.Set;
 public class TreeService {
     private static final char MALE_CHAR = 'M';
     private static final char FEMALE_CHAR = 'F';
-    private static final int MAXDEPTH = 4;
+    private static final int MAXDEPTH = 6;
 
     private final FamilyRepository familyRepository;
     private final IndividualRepository individualRepository;
@@ -180,7 +180,7 @@ public class TreeService {
     }
 
     public List<IndividualDto> getAllByLastname(String lastName) {
-        List<Individual> list = this.individualRepository.findByLastName(lastName, new Sort(new String[] {"birthDate", "deathDate", "lastName", "firstNames"}));
+        List<Individual> list = this.individualRepository.findByLastName(lastName, Sort.by(new String[] {"birthDate", "deathDate", "lastName", "firstNames"}));
 
         List<IndividualDto> result = new ArrayList<>(list.size());
         for (Individual indi : list) {
