@@ -22,6 +22,11 @@ public class GeneaController {
         this.treeService = treeService;
     }
 
+    /**
+     * Level 1: just all known last names (plus a count)
+     * @param model
+     * @return
+     */
     @GetMapping(path = "/familynames")
     public String getAllFamilyNames(Model model) {
         model.addAttribute("names", this.treeService.getLastNames());
@@ -29,6 +34,12 @@ public class GeneaController {
         return "familynames";
     }
 
+    /**
+     * Level 2: all first names plus details for a supplied last name.
+     * @param name
+     * @param model
+     * @return
+     */
     @GetMapping(path = "/names/{name}")
     public String getFamily(@PathVariable String name, Model model) {
         List<IndividualDto> persons = this.treeService.getAllByLastname(name);
@@ -37,6 +48,12 @@ public class GeneaController {
         return "names";
     }
 
+    /**
+     * Level 3: details about one person: siblings, parents, grandparents, marriage(s), children
+     * @param id - the internal ID of the person.
+     * @param model
+     * @return
+     */
     @GetMapping(path = "/person/{id}")
     public String getPerson(@PathVariable long id, Model model) {
         PersonDetailsVm person = new PersonDetailsVm();
@@ -49,7 +66,8 @@ public class GeneaController {
         IndividualDto primary = opt.get();
         person.primary = new IndividualVm(primary);
 
-        if (primary.getChildFamilies().size() > 0) {
+        // Assume each person is child in (at most) one family. Ignore adoptions etc.
+        if (!primary.getChildFamilies().isEmpty()) {
             // use only first one for siblings and (grand)parents
             FamilyDto fam = primary.getChildFamilies().iterator().next();
             person.family = new FamilyVm(fam);
@@ -71,6 +89,12 @@ public class GeneaController {
                     }
                 }
             }
+        }
+
+        // A person may have (had) multiple marriages.
+        for (FamilyDto dto : primary.getSpouseFamilies()) {
+            FamilyVm fam = new FamilyVm(dto);
+            person.marriages.add(fam);
         }
 
         model.addAttribute("person", person);

@@ -52,14 +52,25 @@
             </tr>
         </table>
 
-        <q th:if="${person.marriages.size()} > 0">
-        <h2>Marriage(s)</h2>
-        <p>
-            married to {other person}, {date} {place}. divorced {date} {place}
-        </p>
-        <p>
-            children ...
-        </p>
+        <q th:if="${!person.marriages.isEmpty()}" th:remove="tag">
+        <h2>Marriage<span th:if="${person.marriages.size()} > 1" th:remove="tag">s</span></h2>
+        <div th:each="family : ${person.marriages}">
+            <p th:if="${family.husband.id == person.primary.id}">
+                Married to <span th:replace="fragments/layout :: personline(${family.wife})">
+            </p>
+            <p th:if="${family.wife.id == person.primary.id}">
+                Married to <span th:replace="fragments/layout :: personline(${family.husband})">
+            </p>
+            <p th:if="${!family.children.isEmpty()}">
+                <strong>Children</strong>
+                <ul>
+                    <li th:each="child : ${family.children}"><span th:replace="fragments/layout :: personline(${child})"></span></li>
+                </ul>
+            </p>
+            <p th:if="${family.children.isEmpty()}">
+                <span>No (known) children</strong>
+            </p>
+       </div>
         </q>
     </div>
 </body>

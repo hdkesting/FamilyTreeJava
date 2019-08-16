@@ -22,8 +22,9 @@
         <strong th:if="${person.isMale()}">&male;👨</strong>
         <strong th:if="${person.isFemale()}">&female;👩</strong>
     </p>
-    <p th:if="${person.birthDate != null}">✤ <span th:text="${person.birthDate}"></span> <span th:text="${person.birthPlace}"></span></p>
-    <p th:if="${person.deathDate != null}">&dagger; <span th:text="${person.deathDate}"></span> <span th:text="${person.deathPlace}"></span></p>
+    <p th:if="${person.birthDate.equals(person.deathDate)}">✤&dagger; <span th:text="${person.birthDate}"></span> <span th:text="${person.birthPlace}"></span></p>
+    <p th:if="${person.birthDate != null && !person.birthDate.equals(person.deathDate)}">✤ <span th:text="${person.birthDate}"></span> <span th:text="${person.birthPlace}"></span></p>
+    <p th:if="${person.deathDate != null && !person.birthDate.equals(person.deathDate)}">&dagger; <span th:text="${person.deathDate}"></span> <span th:text="${person.deathPlace}"></span></p>
 </div>
 
 <!-- parameter person is of type IndividualVm -->
@@ -31,8 +32,9 @@
     <a href="/person/" th:attrappend="href=${person.id}" th:text="${person.getFullName()}"></a>
     <strong th:if="${person.isMale()}">&male;👨</strong>
     <strong th:if="${person.isFemale()}">&female;👩</strong>
-    <p th:if="${person.birthDate != null}" th:remove="tag">, ✤ <span th:text="${person.birthDate}" th:remove="tag"></span> <span th:text="${person.birthPlace}" th:remove="tag"></span></p>
-    <p th:if="${person.deathDate != null}" th:remove="tag">, &dagger; <span th:text="${person.deathDate}" th:remove="tag"></span> <span th:text="${person.deathPlace}" th:remove="tag"></span></p>
+    <p th:if="${person.birthDate.equals(person.deathDate)}" th:remove="tag">, ✤&dagger; <span th:text="${person.birthDate}" th:remove="tag"></span> <span th:text="${person.birthPlace}" th:remove="tag"></span></p>
+    <p th:if="${person.birthDate != null && !person.birthDate.equals(person.deathDate)}" th:remove="tag">, ✤ <span th:text="${person.birthDate}" th:remove="tag"></span> <span th:text="${person.birthPlace}" th:remove="tag"></span></p>
+    <p th:if="${person.deathDate != null && !person.birthDate.equals(person.deathDate)}" th:remove="tag">, &dagger; <span th:text="${person.deathDate}" th:remove="tag"></span> <span th:text="${person.deathPlace}" th:remove="tag"></span></p>
 </span>
 
 <!-- parameter is of type FamilyVm -->
@@ -41,5 +43,6 @@
     <p th:if="${family.marriageDate} != null"><span title="Married">⚭</span> <span th:text="${family.marriageDate}"></span> <span th:text="${family.marriagePlace}"></span></p>
     <p th:if="${family.divorceDate} != null"><span title="Divorced">⚮</span> <span th:text="${family.divorceDate}"></span> <span th:text="${family.divorcePlace}"></span></p>
 </div>
+
 </body>
 </html>
