@@ -97,6 +97,8 @@ public class GeneaController {
             person.marriages.add(fam);
         }
 
+        person.sortData();
+        
         model.addAttribute("person", person);
         return "person";
     }

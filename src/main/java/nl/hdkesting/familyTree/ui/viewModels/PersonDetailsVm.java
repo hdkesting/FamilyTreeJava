@@ -1,6 +1,10 @@
 package nl.hdkesting.familyTree.ui.viewModels;
 
+import nl.hdkesting.familyTree.infrastructure.models.Individual;
+
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -21,6 +25,24 @@ public class PersonDetailsVm {
             if (sib.id != primary.id) {
                 siblings.add(sib);
             }
+        }
+    }
+
+    public void sortData() {
+        Collections.sort(siblings, new SortIndividualsByBirth());
+        Collections.sort(family.children, new SortIndividualsByBirth());
+    }
+
+    class SortIndividualsByBirth implements Comparator<IndividualVm> {
+        public int compare(IndividualVm a, IndividualVm b) {
+            if (a.birthDate == null) {
+                return b.birthDate == null ? 0 : 1;
+            }
+            if (b.birthDate == null) {
+                return -1;
+            }
+
+            return a.birthDate.compareTo(b.birthDate);
         }
     }
 }
