@@ -30,6 +30,6 @@ public class NameCount {
 
     @Override
     public String toString() {
-        return lastName + " (" + count + ")";
+        return String.format("%s (%d)", this.lastName, this.count);
     }
 }

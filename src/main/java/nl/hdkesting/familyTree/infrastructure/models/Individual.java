@@ -131,4 +131,9 @@ public class Individual {
     public void setChildFamilies(Set<Family> childFamilies) {
         this.childFamilies = childFamilies;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Individual @I%d: %s /%s/", this.id, this.firstNames, this.lastName);
+    }
 }

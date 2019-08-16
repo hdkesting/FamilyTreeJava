@@ -99,4 +99,9 @@ public class Family {
     public void setDivorcePlace(String divorcePlace) {
         this.divorcePlace = divorcePlace;
     }
+
+    @Override
+    public String toString() {
+        return "Family @F" + this.id;
+    }
 }

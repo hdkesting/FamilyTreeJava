@@ -70,4 +70,9 @@ public class FamilyDto {
     public void setChildren(Set<IndividualDto> children) {
         this.children = children;
     }
+
+    @Override
+    public String toString() {
+        return "Family @F" + this.id;
+    }
 }

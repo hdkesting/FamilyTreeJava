@@ -52,4 +52,9 @@ public class NameCountModel implements Serializable {
     public void setCount(long count) {
         this.count = count;
     }
+
+    @Override
+    public String toString() {
+        return String.format("%s * %d", this.lastname, this.count);
+    }
 }
