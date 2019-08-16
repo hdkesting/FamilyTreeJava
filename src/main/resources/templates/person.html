@@ -56,7 +56,7 @@
         <h2>Marriage<span th:if="${person.marriages.size()} > 1" th:remove="tag">s</span></h2>
         <div th:each="family : ${person.marriages}">
             <p th:if="${family.husband.id == person.primary.id}">
-                Married to <span th:replace="fragments/layout :: personline(${family.wife})">
+                <strong>Married to</strong> <span th:replace="fragments/layout :: personline(${family.wife})">
             </p>
             <p th:if="${family.wife.id == person.primary.id}">
                 Married to <span th:replace="fragments/layout :: personline(${family.husband})">
@@ -68,7 +68,7 @@
                 </ul>
             </p>
             <p th:if="${family.children.isEmpty()}">
-                <span>No (known) children</strong>
+                <span>No (known) children</span>
             </p>
        </div>
         </q>

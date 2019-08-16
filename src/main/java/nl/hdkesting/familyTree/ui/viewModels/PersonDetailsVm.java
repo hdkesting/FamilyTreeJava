@@ -30,7 +30,9 @@ public class PersonDetailsVm {
 
     public void sortData() {
         Collections.sort(siblings, new SortIndividualsByBirth());
-        Collections.sort(family.children, new SortIndividualsByBirth());
+        for (FamilyVm fam : this.marriages) {
+            Collections.sort(fam.children, new SortIndividualsByBirth());
+        }
     }
 
     class SortIndividualsByBirth implements Comparator<IndividualVm> {

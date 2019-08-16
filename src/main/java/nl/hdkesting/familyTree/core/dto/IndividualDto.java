@@ -13,8 +13,8 @@ public class IndividualDto {
     private String birthPlace;
     private LocalDate deathDate;
     private String deathPlace;
-    private Set<FamilyDto> spouseFamilies = new HashSet<>();
-    private Set<FamilyDto> childFamilies = new HashSet<>();
+    private final Set<FamilyDto> spouseFamilies = new HashSet<>();
+    private final Set<FamilyDto> childFamilies = new HashSet<>();
 
     public long getId() {
         return id;
@@ -84,16 +84,8 @@ public class IndividualDto {
         return spouseFamilies;
     }
 
-    public void setSpouseFamilies(Set<FamilyDto> spouseFamilies) {
-        this.spouseFamilies = spouseFamilies;
-    }
-
     public Set<FamilyDto> getChildFamilies() {
         return childFamilies;
-    }
-
-    public void setChildFamilies(Set<FamilyDto> childFamilies) {
-        this.childFamilies = childFamilies;
     }
 
     public String getFullName() {

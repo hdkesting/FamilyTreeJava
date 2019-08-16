@@ -35,10 +35,6 @@ table.pedigree td {
     text-align: center;
 }
 
-table.pedigree tr:first-of-type div div {
-    float: left;   
-}
-
 table.pedigree tr:nth-of-type(3) td {
     width: 50%;
 }
@@ -50,6 +46,8 @@ table.pedigree div.primary {
 table.pedigree div.sibling {
     color: darkgrey;
     font-size: smaller;
+    padding: 0 4px;
+    float: left;
 }
 
 table.pedigree div.parent {

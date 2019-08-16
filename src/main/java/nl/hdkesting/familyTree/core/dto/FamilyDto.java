@@ -12,8 +12,8 @@ public class FamilyDto {
     private String marriagePlace;
     private LocalDate divorceDate;
     private String divorcePlace;
-    private Set<IndividualDto> spouses = new HashSet<>();
-    private Set<IndividualDto> children = new HashSet<>();
+    private final Set<IndividualDto> spouses = new HashSet<>();
+    private final Set<IndividualDto> children = new HashSet<>();
 
     public long getId() {
         return id;
@@ -59,16 +59,8 @@ public class FamilyDto {
         return spouses;
     }
 
-    public void setSpouses(Set<IndividualDto> spouses) {
-        this.spouses = spouses;
-    }
-
     public Set<IndividualDto> getChildren() {
         return children;
-    }
-
-    public void setChildren(Set<IndividualDto> children) {
-        this.children = children;
     }
 
     @Override
