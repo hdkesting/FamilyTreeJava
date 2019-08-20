@@ -10,7 +10,7 @@
             Back to <a href="/names/" th:attrappend="href=${person.primary.lastName}" th:text="${person.primary.lastName}"></a>.
         </p>
 
-        <h1>Information about <span th:text="${person.primary.getFullName()}" th:remove="tag">{person}</span></h1>
+        <h1>Information about <span th:text="${person.primary.getFullName()}" class="name">{person}</span></h1>
 
         <h2>Descent</h2>
         <table class="table table-bordered pedigree">

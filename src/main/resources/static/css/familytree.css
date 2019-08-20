@@ -4,6 +4,9 @@ body {
 
 header {
     background: lightgrey;
+    font-family: Gabriola;
+    text-align: center;
+    font-size: 48pt;
 }
 
 footer {
@@ -58,4 +61,9 @@ table.pedigree div.parent {
 table.pedigree div.marriage {
     width: 20%;
     float: left;
+}
+
+span.name {
+    font-family: Gabriola;
+    font-size: 45pt;
 }

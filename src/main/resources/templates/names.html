@@ -7,7 +7,7 @@
 <body>
     <div layout:fragment="content">
         <p><a href="/familynames">Back to overview</a></p>
-        <h1>Family <q><strong th:text="${name}"></strong></q></h1>
+        <h1>Family <q><span th:text="${name}" class="name"></span></q></h1>
         <div class="persons">
             <div th:each="person : ${persons}">
                 <p>
