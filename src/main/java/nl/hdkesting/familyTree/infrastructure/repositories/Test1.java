@@ -2,6 +2,7 @@ package nl.hdkesting.familyTree.infrastructure.repositories;
 
 import nl.hdkesting.familyTree.infrastructure.models.Family;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
+import nl.hdkesting.familyTree.infrastructure.models.SpouseFamily;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -11,7 +12,6 @@ import org.hibernate.cfg.Configuration;
 import org.hibernate.query.Query;
 import org.hibernate.service.ServiceRegistry;
 
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -63,15 +63,11 @@ public class Test1 {
 
             Family us = getFamily(session, -1);
             us.setMarriageDate(1996, 4, 12);
-            Set<Individual> spouses = us.getSpouses();
-            if (spouses == null) {
-                us.setSpouses(new HashSet<Individual>());
-                spouses = us.getSpouses();
-            }
+            Set<SpouseFamily> spouses = us.spouses;
 
             if (spouses.size() == 0) {
-                spouses.add(me);
-                spouses.add(paula);
+                spouses.add(new SpouseFamily(us.id, me.id));
+                spouses.add(new SpouseFamily(us.id, paula.id));
             }
             session.save(us);
 
@@ -124,7 +120,7 @@ public class Test1 {
 
         if (res == null) {
             res = new Family();
-            res.setId(id);
+            res.id = id;
         }
 
         return res;

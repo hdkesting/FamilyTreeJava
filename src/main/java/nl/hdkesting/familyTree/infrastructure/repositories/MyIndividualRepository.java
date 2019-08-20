@@ -26,6 +26,8 @@ public class MyIndividualRepository {
         Individual result = boilerPlate(em -> em.createQuery(
                 "select ind " +
                         "from Individual ind " +
+                        "left join fetch ind.spouseFamilies sf " +
+                        "left join fetch ind.childFamilies cf " +
                         "where ind.id = :id", Individual.class)
                 .setParameter("id", id)
                 .getSingleResult());

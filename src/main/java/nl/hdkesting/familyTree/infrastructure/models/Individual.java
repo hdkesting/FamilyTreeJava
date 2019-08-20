@@ -2,7 +2,6 @@ package nl.hdkesting.familyTree.infrastructure.models;
 
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.GregorianCalendar;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -39,14 +38,14 @@ public class Individual {
             name = "spouses",
             joinColumns = {@JoinColumn(name = "spouseid")},
             inverseJoinColumns = { @JoinColumn(name = "familyid")})
-    public Set<Family> spouseFamilies = new HashSet<>();
+    public final Set<Family> spouseFamilies = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "children",
             joinColumns = {@JoinColumn(name = "childid")},
             inverseJoinColumns = { @JoinColumn(name = "familyid")})
-    public Set<Family> childFamilies = new HashSet<>();
+    public final Set<Family> childFamilies = new HashSet<>();
 
     public void setBirthDate(int year, int month, int day) {
         this.birthDate = LocalDate.of(year, month, day);
