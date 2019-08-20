@@ -181,7 +181,7 @@ public class TreeService {
     }
 
     public List<IndividualDto> getAllByLastname(String lastName) {
-        List<Individual> list = this.individualRepository.findByLastName(lastName, Sort.by(new String[] {"birthDate", "deathDate", "lastName", "firstNames"}));
+        List<Individual> list = this.individualRepository.findByLastName(lastName);
 
         return convert(list);
     }

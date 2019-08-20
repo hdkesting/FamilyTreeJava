@@ -43,11 +43,11 @@ public class MyIndividualRepository {
     }
 
     public void deleteAll() {
-        throw new NotYetImplementedException();
+        throw new NotYetImplementedException("deleteAll must be implemented");
     }
 
     public void save(Individual individual) {
-        throw new NotYetImplementedException();
+        throw new NotYetImplementedException("save Individual must be implemented");
     }
 
     public long count() {
@@ -62,7 +62,8 @@ public class MyIndividualRepository {
     public List<NameCount> getLastNames() {
         List<NameCountModel> names = boilerPlate(em -> em.createQuery(
                 "SELECT new NameCountModel(lastName, count(*)) " +
-                        "FROM Individual GROUP BY lastName ORDER BY lastName", NameCountModel.class)
+                    "FROM Individual " +
+                    "GROUP BY lastName ORDER BY lastName", NameCountModel.class)
                 .getResultList()
             );
 
@@ -74,12 +75,29 @@ public class MyIndividualRepository {
         return result;
     }
 
-    public List<Individual> findByLastName(String lastName, Sort sort) {
-        throw new NotYetImplementedException();
+    public List<Individual> findByLastName(String lastName) {
+        List<Individual> result = boilerPlate(em -> em.createQuery(
+                "SELECT ind " +
+                    "FROM Individual ind " +
+                    "WHERE lastName = :lastname " +
+                    "ORDER BY birthDate, deathDate, lastName, firstNames", Individual.class)
+                .setParameter("lastname", lastName)
+                .getResultList()
+            );
+
+        return result;
     }
 
     public List<Individual> findByFirstNamesAndLastName(String firstName, String lastName) {
-        throw new NotYetImplementedException();
+        List<Individual> result = boilerPlate(em -> em.createQuery(
+                "SELECT indi FROM Individual indi " +
+                    "WHERE firstNames LIKE :first AND lastName LIKE :last", Individual.class)
+                .setParameter("first", "%" + firstName.replace(' ', '%') + "%")
+                .setParameter("last", '%' + lastName + '%')
+                .getResultList()
+        );
+
+        return result;
     }
 
     private <T> T boilerPlate(UseEntityManager<T> usage) {
