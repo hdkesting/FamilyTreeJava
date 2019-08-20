@@ -6,7 +6,27 @@
 </head>
 <body>
     <div layout:fragment="content">
-        <h1>TODO search page</h1>
+        <h1>Search for names to edit</h1>
+        <form method="post">
+            <p>First name</p>
+            <p><input type="text" name="firstname" th:value="${firstname}"/> </p>
+            <p>Last name</p>
+            <p><input type="text" name="lastname" th:value="${lastname}"></p>
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+        <!-- TODO result list -->
+        <div th:if="${list} != null">
+            <table>
+                <tr th:each="indi : ${list}">
+                    <td>
+                        <span th:replace="fragments/layout :: personline(${indi})" th:remove="tag"></span>
+                    </td>
+                    <td>
+                        EDIT @I<span th:text="${indi.id}"></span>@
+                    </td>
+                </tr>
+            </table>
+        </div>
     </div>
 </body>
 </html>

@@ -11,125 +11,45 @@ import java.util.Set;
 public class Individual {
     @Id
     @Column(name = "id")
-    private Long id;
+    public Long id;
 
     @Column(name = "firstnames")
-    private String firstNames;
+    public String firstNames;
 
     @Column(name = "lastname")
-    private String lastName;
+    public String lastName;
 
     @Column(name = "sex")
-    private char sex; // 'M' or 'F'
+    public char sex; // 'M' or 'F'
 
     @Column(name = "birthdate")
-    private LocalDate birthDate;
+    public LocalDate birthDate;
 
     @Column(name = "birthplace")
-    private String birthPlace;
+    public String birthPlace;
 
     @Column(name = "deathdate")
-    private LocalDate deathDate;
+    public LocalDate deathDate;
 
     @Column(name = "deathplace")
-    private String deathPlace;
+    public String deathPlace;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "spouses",
             joinColumns = {@JoinColumn(name = "spouseid")},
             inverseJoinColumns = { @JoinColumn(name = "familyid")})
-    private Set<Family> spouseFamilies = new HashSet<>();
+    public Set<Family> spouseFamilies = new HashSet<>();
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "children",
             joinColumns = {@JoinColumn(name = "childid")},
             inverseJoinColumns = { @JoinColumn(name = "familyid")})
-    private Set<Family> childFamilies = new HashSet<>();
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getFirstNames() {
-        return firstNames;
-    }
-
-    public void setFirstNames(String firstNames) {
-        this.firstNames = firstNames;
-    }
-
-    public String getLastName() {
-        return lastName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public char getSex() {
-        return sex;
-    }
-
-    public void setSex(char sex) {
-        this.sex = sex;
-    }
-
-    public LocalDate getBirthDate() {
-        return birthDate;
-    }
-
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
-    }
+    public Set<Family> childFamilies = new HashSet<>();
 
     public void setBirthDate(int year, int month, int day) {
         this.birthDate = LocalDate.of(year, month, day);
-    }
-
-    public String getBirthPlace() {
-        return birthPlace;
-    }
-
-    public void setBirthPlace(String birthPlace) {
-        this.birthPlace = birthPlace;
-    }
-
-    public LocalDate getDeathDate() {
-        return deathDate;
-    }
-
-    public void setDeathDate(LocalDate deathDate) {
-        this.deathDate = deathDate;
-    }
-
-    public String getDeathPlace() {
-        return deathPlace;
-    }
-
-    public void setDeathPlace(String deathPlace) {
-        this.deathPlace = deathPlace;
-    }
-
-    public Set<Family> getSpouseFamilies() {
-        return spouseFamilies;
-    }
-
-    public void setSpouseFamilies(Set<Family> spouseFamilies) {
-        this.spouseFamilies = spouseFamilies;
-    }
-
-    public Set<Family> getChildFamilies() {
-        return childFamilies;
-    }
-
-    public void setChildFamilies(Set<Family> childFamilies) {
-        this.childFamilies = childFamilies;
     }
 
     @Override

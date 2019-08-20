@@ -46,19 +46,19 @@ public class Test1 {
             Individual me = getPerson(session, -1);
 
             me.setBirthDate(1961, 5-1, 13);
-            me.setBirthPlace("Amsterdam");
-            me.setFirstNames("Hans Douwe");
-            me.setLastName("Kesting");
-            me.setSex('M');
+            me.birthPlace = "Amsterdam";
+            me.firstNames = "Hans Douwe";
+            me.lastName = "Kesting";
+            me.sex='M';
 
             System.out.println("------- saving --------");
             session.save(me); // NB will crash when record (with this key) already exists
 
             Individual paula = getPerson(session, -2);
             paula.setBirthDate(1963, 2-1, 18);
-            paula.setFirstNames("Paula");
-            paula.setLastName("Andringa");
-            paula.setSex('F');
+            paula.firstNames="Paula";
+            paula.lastName="Andringa";
+            paula.sex='F';
             session.save(paula);
 
             Family us = getFamily(session, -1);
@@ -83,7 +83,7 @@ public class Test1 {
             System.out.println("==> # of persons: " + people.size());
 
             for (Individual person: people) {
-                System.out.println("==> " + person.getFirstNames() + " /" + person.getLastName() + "/");
+                System.out.println("==> " + person.firstNames + " /" + person.lastName + "/");
             }
 
             System.out.println("------- committing --------");
@@ -111,7 +111,7 @@ public class Test1 {
 
         if (res == null) {
             res = new Individual();
-            res.setId(id);
+            res.id=id;
         }
 
         return res;

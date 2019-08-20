@@ -5,6 +5,7 @@ import nl.hdkesting.familyTree.infrastructure.models.Family;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
 import nl.hdkesting.familyTree.infrastructure.repositories.FamilyRepository;
 import nl.hdkesting.familyTree.infrastructure.repositories.IndividualRepository;
+import nl.hdkesting.familyTree.infrastructure.repositories.MyIndividualRepository;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +21,11 @@ public class TreeService {
     private static final int MAXDEPTH = 6;
 
     private final FamilyRepository familyRepository;
-    private final IndividualRepository individualRepository;
+    private final MyIndividualRepository individualRepository;
 
     public TreeService(
             FamilyRepository familyRepository,
-            IndividualRepository individualRepository) {
+            MyIndividualRepository individualRepository) {
         this.familyRepository = familyRepository;
         this.individualRepository = individualRepository;
     }
@@ -106,7 +107,7 @@ public class TreeService {
             Set<Individual> spouses = family.getSpouses();
             for (Individual spouse : spouses) {
                 boolean found = false;
-                long spouseId = spouse.getId();
+                long spouseId = spouse.id;
                 for (long id : spouseIds) {
                     found = found || id == spouseId;
                 }
@@ -120,7 +121,7 @@ public class TreeService {
             for (long id : spouseIds) {
                 boolean found = false;
                 for (Individual spouse : spouses) {
-                    found = found || id == spouse.getId();
+                    found = found || id == spouse.id;
                 }
 
                 if (!found) {
@@ -135,7 +136,7 @@ public class TreeService {
             Set<Individual> children = family.getChildren();
             for (Individual child : children) {
                 boolean found = false;
-                long childId = child.getId();
+                long childId = child.id;
                 for (long id : childIds) {
                     found = found || id == childId;
                 }
@@ -149,7 +150,7 @@ public class TreeService {
             for (long id : childIds) {
                 boolean found = false;
                 for (Individual child : children) {
-                    found = found || id == child.getId();
+                    found = found || id == child.id;
                 }
 
                 if (!found) {
@@ -182,9 +183,19 @@ public class TreeService {
     public List<IndividualDto> getAllByLastname(String lastName) {
         List<Individual> list = this.individualRepository.findByLastName(lastName, Sort.by(new String[] {"birthDate", "deathDate", "lastName", "firstNames"}));
 
+        return convert(list);
+    }
+
+    public List<IndividualDto> searchByName(String firstName, String lastName) {
+        List<Individual> list = this.individualRepository.findByFirstNamesAndLastName(firstName, lastName);
+
+        return convert(list);
+    }
+
+    private List<IndividualDto> convert(List<Individual> list) {
         List<IndividualDto> result = new ArrayList<>(list.size());
         for (Individual indi : list) {
-            IndividualDto dto = getNewIndividualDto(indi.getId());
+            IndividualDto dto = getNewIndividualDto(indi.id);
             map(indi, dto, 1);
             result.add(dto);
         }
@@ -193,7 +204,7 @@ public class TreeService {
     }
 
     private IndividualDto convert(Individual source, int depth) {
-        IndividualDto target = getNewIndividualDto(source.getId());
+        IndividualDto target = getNewIndividualDto(source.id);
         map(source, target, depth);
         return target;
     }
@@ -220,7 +231,7 @@ public class TreeService {
 
     private Individual getNewIndividual(long id) {
         Individual i = new Individual();
-        i.setId(id);
+        i.id = id;
         return i;
     }
 
@@ -284,23 +295,23 @@ public class TreeService {
     }
 
     private void map(IndividualDto fromDtoPerson, Individual toDbPerson, int depth) {
-        toDbPerson.setFirstNames(fromDtoPerson.getFirstNames());
-        toDbPerson.setLastName(fromDtoPerson.getLastName());
+        toDbPerson.firstNames = fromDtoPerson.getFirstNames();
+        toDbPerson.lastName = fromDtoPerson.getLastName();
         switch (fromDtoPerson.getSex()){
             case Male:
-                toDbPerson.setSex(MALE_CHAR);
+                toDbPerson.sex = MALE_CHAR;
                 break;
             case Female:
-                toDbPerson.setSex(FEMALE_CHAR);
+                toDbPerson.sex = FEMALE_CHAR;
                 break;
             default:
-                toDbPerson.setSex('?');
+                toDbPerson.sex = '?';
         }
 
-        toDbPerson.setBirthDate(fromDtoPerson.getBirthDate());
-        toDbPerson.setBirthPlace(fromDtoPerson.getBirthPlace());
-        toDbPerson.setDeathDate(fromDtoPerson.getDeathDate());
-        toDbPerson.setDeathPlace(fromDtoPerson.getDeathPlace());
+        toDbPerson.birthDate = fromDtoPerson.getBirthDate();
+        toDbPerson.birthPlace = fromDtoPerson.getBirthPlace();
+        toDbPerson.deathDate = fromDtoPerson.getDeathDate();
+        toDbPerson.deathPlace = fromDtoPerson.getDeathPlace();
 
         depth--;
         if (depth <= 0) return;
@@ -309,9 +320,9 @@ public class TreeService {
     }
 
     private void map(Individual fromDbPerson, IndividualDto  toDtoPerson, int depth) {
-        toDtoPerson.setFirstNames(fromDbPerson.getFirstNames());
-        toDtoPerson.setLastName(fromDbPerson.getLastName());
-        switch (fromDbPerson.getSex()){
+        toDtoPerson.setFirstNames(fromDbPerson.firstNames);
+        toDtoPerson.setLastName(fromDbPerson.lastName);
+        switch (fromDbPerson.sex){
             case MALE_CHAR:
                 toDtoPerson.setSex(Sex.Male);
                 break;
@@ -322,21 +333,21 @@ public class TreeService {
                 toDtoPerson.setSex(Sex.Unknown);
         }
 
-        toDtoPerson.setBirthDate(fromDbPerson.getBirthDate());
-        toDtoPerson.setBirthPlace(fromDbPerson.getBirthPlace());
-        toDtoPerson.setDeathDate(fromDbPerson.getDeathDate());
-        toDtoPerson.setDeathPlace(fromDbPerson.getDeathPlace());
+        toDtoPerson.setBirthDate(fromDbPerson.birthDate);
+        toDtoPerson.setBirthPlace(fromDbPerson.birthPlace);
+        toDtoPerson.setDeathDate(fromDbPerson.deathDate);
+        toDtoPerson.setDeathPlace(fromDbPerson.deathPlace);
 
         depth--;
         if (depth <= 0) return;
 
-        var sourceChildFams = fromDbPerson.getChildFamilies();
+        var sourceChildFams = fromDbPerson.childFamilies;
         var targetChildFams = toDtoPerson.getChildFamilies();
         for (Family source : sourceChildFams) {
             targetChildFams.add(convert(source, depth));
         }
 
-        var sourceSpouseFams = fromDbPerson.getSpouseFamilies();
+        var sourceSpouseFams = fromDbPerson.spouseFamilies;
         var targetSpouseFams = toDtoPerson.getSpouseFamilies();
         for (Family source : sourceSpouseFams) {
             targetSpouseFams.add(convert(source, depth));
