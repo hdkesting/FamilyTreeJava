@@ -3,12 +3,14 @@ package nl.hdkesting.familyTree.infrastructure.repositories;
 import nl.hdkesting.familyTree.core.dto.NameCount;
 import nl.hdkesting.familyTree.core.support.NotYetImplementedException;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
+import nl.hdkesting.familyTree.infrastructure.models.NameCountModel;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -58,7 +60,18 @@ public class MyIndividualRepository {
     }
 
     public List<NameCount> getLastNames() {
-        throw new NotYetImplementedException();
+        List<NameCountModel> names = boilerPlate(em -> em.createQuery(
+                "SELECT new NameCountModel(lastName, count(*)) " +
+                        "FROM Individual GROUP BY lastName ORDER BY lastName", NameCountModel.class)
+                .getResultList()
+            );
+
+        List<NameCount> result = new ArrayList<>();
+        for (NameCountModel name : names) {
+            result.add(new NameCount(name.getLastname(), name.getCount()));
+        }
+
+        return result;
     }
 
     public List<Individual> findByLastName(String lastName, Sort sort) {
