@@ -67,6 +67,22 @@ public class GeneaController {
         IndividualDto primary = opt.get();
         person.primary = new IndividualVm(primary);
 
+        // add all his/her marriages (+children)
+        for(var spouseFam : this.treeService.getSpouseFamiliesByIndividualId(id)) {
+            person.marriages.add(new FamilyVm(spouseFam));
+        }
+
+        // add parents
+        var childFams = this.treeService.getChildFamiliesByIndividualId(id);
+        if (!childFams.isEmpty()) {
+            // use the first one, ignore potential others
+            person.family = new FamilyVm(childFams.iterator().next());
+            person.setSiblings();
+
+            // add grandparents (only needed when parents are known)
+            // TODO
+        }
+        /*
         // Assume each person is child in (at most) one family. Ignore adoptions etc.
         if (!primary.getChildFamilies().isEmpty()) {
             // use only first one for siblings and (grand)parents
@@ -98,6 +114,8 @@ public class GeneaController {
             person.marriages.add(fam);
         }
 
+
+         */
         person.sortData();
 
         System.out.println("=== Done getting person " + id);

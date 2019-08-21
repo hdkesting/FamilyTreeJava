@@ -49,6 +49,16 @@ public class TreeService {
         return target;
     }
 
+    public List<FamilyDto> getSpouseFamiliesByIndividualId(long id) {
+        List<Family> families = this.familyRepository.getFamiliesBySpouseId(id);
+        return convertFamilies(families);
+    }
+
+    public List<FamilyDto> getChildFamiliesByIndividualId(long id) {
+        List<Family> families = this.familyRepository.getFamiliesByChildId(id);
+        return convertFamilies(families);
+    }
+
     public boolean clearAll() {
         try {
             this.individualRepository.deleteAll();
@@ -92,7 +102,7 @@ public class TreeService {
     public void updateRelations(long familyId, ArrayList<Long> spouseIds, ArrayList<Long> childIds) {
         var optFamily =  familyRepository.findById(familyId);
 
-        if (!optFamily.isPresent()) {
+        if (optFamily.isEmpty()) {
             // just ignore or should I throw ??
             return;
         }
@@ -122,9 +132,7 @@ public class TreeService {
 
             if (!found) {
                 var optSpouse = this.individualRepository.findById(id);
-                if (optSpouse.isPresent()) {
-                    spouses.add(optSpouse.get());
-                }
+                optSpouse.ifPresent(spouses::add);
             }
         }
 
@@ -150,9 +158,7 @@ public class TreeService {
 
             if (!found) {
                 var optChild = this.individualRepository.findById(id);
-                if (optChild.isPresent()){
-                    children.add(optChild.get());
-                }
+                optChild.ifPresent(children::add);
             }
         }
 
@@ -191,6 +197,17 @@ public class TreeService {
         for (Individual indi : list) {
             IndividualDto dto = getNewIndividualDto(indi.id);
             map(indi, dto);
+            result.add(dto);
+        }
+
+        return result;
+    }
+
+    private List<FamilyDto> convertFamilies(List<Family> list) {
+        List<FamilyDto> result = new ArrayList<>(list.size());
+        for (Family fam : list) {
+            FamilyDto dto = getNewFamilyDto(fam.id);
+            map(fam, dto);
             result.add(dto);
         }
 
@@ -255,6 +272,14 @@ public class TreeService {
         toDtoFamily.setMarriagePlace(fromDbFamily.marriagePlace);
         toDtoFamily.setDivorceDate(fromDbFamily.divorceDate);
         toDtoFamily.setDivorcePlace(fromDbFamily.divorcePlace);
+
+        for (var spouse : fromDbFamily.spouses) {
+            toDtoFamily.getSpouses().add(convert(spouse));
+        }
+
+        for (var child : fromDbFamily.children) {
+            toDtoFamily.getChildren().add(convert(child));
+        }
     }
 
     private void map(IndividualDto fromDtoPerson, Individual toDbPerson) {

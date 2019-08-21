@@ -3,14 +3,23 @@ package nl.hdkesting.familyTree.infrastructure.repositories;
 import nl.hdkesting.familyTree.infrastructure.models.Family;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Repository
 public class MyFamilyRepository
     extends MyBaseRepository {
+
+    private static final String FAMILY_QUERY = "select fam " +
+            "from Family fam " +
+            "left join fetch fam.children fc " +
+            "left join fetch fam.spouses fs " +
+            "where fam.id = :id";
 
     public MyFamilyRepository(EntityManagerFactory factory) {
         super(factory);
@@ -23,12 +32,7 @@ public class MyFamilyRepository
      */
     public Optional<Family> findById(long id) {
         System.out.println("-- getting FAM " + id);
-        List<Family> result = boilerPlate(em -> em.createQuery(
-                "select fam " +
-                        "from Family fam " +
-                        "left join fetch fam.children fc " +
-                        "left join fetch fam.spouses fs " +
-                        "where fam.id = :id", Family.class)
+        List<Family> result = boilerPlate(em -> em.createQuery(FAMILY_QUERY, Family.class)
                 .setParameter("id", id)
                 .getResultList());
 
@@ -49,6 +53,58 @@ public class MyFamilyRepository
                 .setParameter("id", id)
                 .getSingleResult());
         return result.equals(1L); // I expect either 0 or 1 for a count by PK
+    }
+
+    /**
+     * Get all (known) families where the person is spouse.
+     * @param spouseId
+     * @return
+     */
+    public List<Family> getFamiliesBySpouseId(long spouseId) {
+        List<Family> result = boilerPlate(em -> {
+            List<Object> familyIds = em.createNativeQuery(
+                "select familyid from spouses where spouseid = :id")
+                    .setParameter("id", spouseId)
+                    .getResultList();
+
+            List<Family> families = new ArrayList<>();
+            for (Object res : familyIds ) {
+                long id = ((BigInteger)res).longValue();
+                families.add(getFamilyById(em, id));
+            }
+            return families;
+        });
+
+        return result;
+    }
+
+    /**
+     * Get all (known) families where the person is child.
+     * @param childId
+     * @return
+     */
+    public List<Family> getFamiliesByChildId(long childId) {
+        List<Family> result = boilerPlate(em -> {
+            List<Object> familyIds = em.createNativeQuery(
+                    "select familyid from children where childid = :id")
+                    .setParameter("id", childId)
+                    .getResultList();
+
+            List<Family> families = new ArrayList<>();
+            for (Object res : familyIds ) {
+                long id = ((BigInteger)res).longValue();
+                families.add(getFamilyById(em, id));
+            }
+            return families;
+        });
+
+        return result;
+    }
+
+    private Family getFamilyById(EntityManager em, long id) {
+        return em.createQuery(FAMILY_QUERY, Family.class)
+                .setParameter("id", id)
+                .getSingleResult();
     }
 
     /**
