@@ -26,9 +26,9 @@ abstract class MyBaseRepository {
 
             transaction.commit();
         } catch (Throwable e) {
-            if (transaction != null &&
-                    transaction.isActive())
+            if (transaction != null && transaction.isActive()) {
                 transaction.rollback();
+            }
             throw e;
         } finally {
             if (entityManager != null) {
