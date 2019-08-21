@@ -15,13 +15,17 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class MyIndividualRepository {
-    private final EntityManagerFactory entityManagerFactory;
+public class MyIndividualRepository extends MyBaseRepository {
 
     public MyIndividualRepository(EntityManagerFactory factory) {
-        this.entityManagerFactory = factory;
+        super(factory);
     }
 
+    /**
+     * Find a single individual based on the supplied id.
+     * @param id
+     * @return
+     */
     public Optional<Individual> findById(long id) {
         Individual result = boilerPlate(em -> em.createQuery(
                 "select ind " +
@@ -52,6 +56,10 @@ public class MyIndividualRepository {
         throw new NotYetImplementedException("save Individual must be implemented");
     }
 
+    /**
+     * Returns the total count of individuals.
+     * @return
+     */
     public long count() {
         Long result = boilerPlate(em -> em.createQuery(
                 "select count(*) " +
@@ -61,6 +69,10 @@ public class MyIndividualRepository {
         return result;
     }
 
+    /**
+     * Find all unique last names plus count of individuals per lastname.
+     * @return
+     */
     public List<NameCount> getLastNames() {
         List<NameCountModel> names = boilerPlate(em -> em.createQuery(
                 "SELECT new NameCountModel(lastName, count(*)) " +
@@ -77,6 +89,11 @@ public class MyIndividualRepository {
         return result;
     }
 
+    /**
+     * Find all individuals with an exact match on the supplied lastname.
+     * @param lastName
+     * @return
+     */
     public List<Individual> findByLastName(String lastName) {
         List<Individual> result = boilerPlate(em -> em.createQuery(
                 "SELECT ind " +
@@ -90,6 +107,12 @@ public class MyIndividualRepository {
         return result;
     }
 
+    /**
+     * Find all individuals with firstname and lastname containing the supplied values.
+     * @param firstName
+     * @param lastName
+     * @return
+     */
     public List<Individual> findByFirstNamesAndLastName(String firstName, String lastName) {
         List<Individual> result = boilerPlate(em -> em.createQuery(
                 "SELECT indi FROM Individual indi " +
@@ -98,33 +121,6 @@ public class MyIndividualRepository {
                 .setParameter("last", '%' + lastName + '%')
                 .getResultList()
         );
-
-        return result;
-    }
-
-    private <T> T boilerPlate(UseEntityManager<T> usage) {
-        EntityManager entityManager = null; // does not implement AutoClosable, so no try-with-resources
-        EntityTransaction transaction = null;
-        T result = null;
-        try {
-            entityManager = entityManagerFactory.createEntityManager();
-            transaction = entityManager.getTransaction();
-            transaction.begin();
-
-            // call injected method
-            result = usage.call(entityManager);
-
-            transaction.commit();
-        } catch (Throwable e) {
-            if (transaction != null &&
-                    transaction.isActive())
-                transaction.rollback();
-            throw e;
-        } finally {
-            if (entityManager != null) {
-                entityManager.close();
-            }
-        }
 
         return result;
     }
