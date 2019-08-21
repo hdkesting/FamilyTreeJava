@@ -4,12 +4,9 @@ import nl.hdkesting.familyTree.core.dto.NameCount;
 import nl.hdkesting.familyTree.core.support.NotYetImplementedException;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
 import nl.hdkesting.familyTree.infrastructure.models.NameCountModel;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.EntityTransaction;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;

@@ -5,7 +5,7 @@ import nl.hdkesting.familyTree.infrastructure.models.ChildFamily;
 import nl.hdkesting.familyTree.infrastructure.models.Family;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
 import nl.hdkesting.familyTree.infrastructure.models.SpouseFamily;
-import nl.hdkesting.familyTree.infrastructure.repositories.FamilyRepository;
+import nl.hdkesting.familyTree.infrastructure.repositories.MyFamilyRepository;
 import nl.hdkesting.familyTree.infrastructure.repositories.MyIndividualRepository;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +20,11 @@ public class TreeService {
     private static final char FEMALE_CHAR = 'F';
     private static final int MAXDEPTH = 6;
 
-    private final FamilyRepository familyRepository;
+    private final MyFamilyRepository familyRepository;
     private final MyIndividualRepository individualRepository;
 
     public TreeService(
-            FamilyRepository familyRepository,
+            MyFamilyRepository familyRepository,
             MyIndividualRepository individualRepository) {
         this.familyRepository = familyRepository;
         this.individualRepository = individualRepository;
@@ -181,8 +181,8 @@ public class TreeService {
 
         sum.setIndividualCount(this.individualRepository.count());
         sum.setFamilyCount(this.familyRepository.count());
-        sum.setSpouseCount(this.familyRepository.getSpousesCount());
-        sum.setChildCount(this.familyRepository.getChildrenCount());
+        sum.setSpouseCount(this.familyRepository.getTotalSpouseCount());
+        sum.setChildCount(this.familyRepository.getTotalChildrenCount());
 
         return sum;
     }
