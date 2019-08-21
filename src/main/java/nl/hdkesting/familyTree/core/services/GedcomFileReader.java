@@ -35,8 +35,8 @@ public class GedcomFileReader {
         }
 
         /* assumptions:
-            - the database was empty or was loaded from this same file: an ID is unique only within one file.
-            - the INDI records go first, so that the references in the FAM records point to existing records.
+            - the database is empty or was loaded from this same file: an ID is unique only within one file.
+            - the INDI records go first, so that the spouse and child references in the FAM records point to existing db records.
          */
         File file = new File(resource.getFile());
 
@@ -52,7 +52,7 @@ public class GedcomFileReader {
                     // store previous object
                     objectReader.store(this.treeService);
 
-                    // create reader for this object
+                    // create reader for this object: "keyword" = index, "value" = object-keyword
                     switch (pline.getValue()){
                         case "INDI":
                             objectReader = new IndividualReader(pline);
@@ -66,6 +66,7 @@ public class GedcomFileReader {
                             break;
                     }
                 } else {
+                    // any other level: continue filling current object
                     objectReader.processNextLine(pline);
                 }
             }

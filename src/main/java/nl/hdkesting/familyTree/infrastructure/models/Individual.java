@@ -8,9 +8,15 @@ import java.util.Set;
 @Entity
 @Table(name = "individual")
 public class Individual {
+    public Individual() {}
+
+    public Individual(long id) {
+        this.id = id;
+    }
+
     @Id
     @Column(name = "id")
-    public Long id;
+    public long id;
 
     @Column(name = "firstnames")
     public String firstNames;
@@ -33,14 +39,14 @@ public class Individual {
     @Column(name = "deathplace")
     public String deathPlace;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "spouses",
             joinColumns = {@JoinColumn(name = "spouseid")},
             inverseJoinColumns = { @JoinColumn(name = "familyid")})
     public final Set<Family> spouseFamilies = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "children",
             joinColumns = {@JoinColumn(name = "childid")},

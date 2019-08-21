@@ -1,10 +1,8 @@
 package nl.hdkesting.familyTree.core.services;
 
 import nl.hdkesting.familyTree.core.dto.*;
-import nl.hdkesting.familyTree.infrastructure.models.ChildFamily;
 import nl.hdkesting.familyTree.infrastructure.models.Family;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
-import nl.hdkesting.familyTree.infrastructure.models.SpouseFamily;
 import nl.hdkesting.familyTree.infrastructure.repositories.MyFamilyRepository;
 import nl.hdkesting.familyTree.infrastructure.repositories.MyIndividualRepository;
 import org.springframework.stereotype.Service;
@@ -89,7 +87,7 @@ public class TreeService {
         Individual dbPerson = individualRepository.findById(id)
                 .orElseGet(() -> getNewIndividual(id));
 
-        map(person, dbPerson, 2);
+        map(person, dbPerson, 1);
         individualRepository.save(dbPerson);
     }
 
@@ -99,81 +97,80 @@ public class TreeService {
 
         long id = family.getId();
         Family dbFamily = familyRepository.findById(id)
-                .orElseGet(() -> {
-                    var f = new Family();
-                    f.id = id;
-                    return f;
-                });
+                .orElseGet(() -> new Family(id));
 
-        map(family, dbFamily, 2);
+        map(family, dbFamily, 1);
         familyRepository.save(dbFamily);
     }
 
     public void updateRelations(long familyId, ArrayList<Long> spouseIds, ArrayList<Long> childIds) {
         var optFamily =  familyRepository.findById(familyId);
 
-        if (optFamily.isPresent()) {
-            // check against stored relations, update where needed
-            Family family = optFamily.get();
+        if (!optFamily.isPresent()) {
+            // just ignore or should I throw ??
+            return;
+        }
 
-            // check for spouses to remove
-            Set<SpouseFamily> spouses = family.spouses;
-            for (SpouseFamily spouse : spouses) {
-                boolean found = false;
-                for (Long id : spouseIds) {
-                    found = found || id.equals(spouse.spouseId);
-                }
+        // check against stored relations, update where needed
+        Family family = optFamily.get();
 
-                if (!found) {
-                    spouses.remove(spouse); // can I modify the list?
-                }
+        // check for spouses to remove
+        Set<Individual> spouses = family.spouses;
+        for (Individual spouse : spouses) {
+            boolean found = false;
+            for (long id : spouseIds) {
+                found = found || id == spouse.id;
             }
 
-            // check for spouses to add
-            for (Long id : spouseIds) {
-                boolean found = false;
-                for (SpouseFamily spouse : spouses) {
-                    found = found || id.equals(spouse.spouseId);
-                }
+            if (!found) {
+                spouses.remove(spouse); // can I modify the list?
+            }
+        }
 
-                if (!found) {
-                    var newspouse = this.individualRepository.findById(id);
-                    if (newspouse.isPresent()){
-                        spouses.add(new SpouseFamily(family.id, id));
-                    }
-                }
+        // check for spouses to add
+        for (long id : spouseIds) {
+            boolean found = false;
+            for (Individual spouse : spouses) {
+                found = found || id == spouse.id;
             }
 
-            // check for children to remove
-            Set<ChildFamily> children = family.children;
-            for (ChildFamily child : children) {
-                boolean found = false;
-                for (Long id : childIds) {
-                    found = found || id.equals(child.childId);
-                }
-
-                if (!found) {
-                    children.remove(child);
+            if (!found) {
+                var optSpouse = this.individualRepository.findById(id);
+                if (optSpouse.isPresent()) {
+                    spouses.add(optSpouse.get());
                 }
             }
+        }
 
-            // check for children to add
-            for (Long id : childIds) {
-                boolean found = false;
-                for (ChildFamily child : children) {
-                    found = found || id.equals(child.childId);
-                }
-
-                if (!found) {
-                    var newchild = this.individualRepository.findById(id);
-                    if (newchild.isPresent()){
-                        children.add(new ChildFamily(family.id, id));
-                    }
-                }
+        // check for children to remove
+        Set<Individual> children = family.children;
+        for (Individual child : children) {
+            boolean found = false;
+            for (long id : childIds) {
+                found = found || id == child.id;
             }
 
-            familyRepository.save(family);
-        } // else ignore
+            if (!found) {
+                children.remove(child);
+            }
+        }
+
+        // check for children to add
+        for (long id : childIds) {
+            boolean found = false;
+            for (Individual child : children) {
+                found = found || id == child.id;
+            }
+
+            if (!found) {
+                var optChild = this.individualRepository.findById(id);
+                if (optChild.isPresent()){
+                    children.add(optChild.get());
+                }
+            }
+        }
+
+        familyRepository.save(family);
     }
 
     public Summary getSummary() {
@@ -241,9 +238,7 @@ public class TreeService {
     }
 
     private Individual getNewIndividual(long id) {
-        Individual i = new Individual();
-        i.id = id;
-        return i;
+        return new Individual(id);
     }
 
     private IndividualDto getNewIndividualDto(long id) {
@@ -259,9 +254,7 @@ public class TreeService {
     }
 
     private Family getNewFamily(long id) {
-        Family f = new Family();
-        f.id = id;
-        return f;
+        return new Family(id);
     }
 
     private void map(FamilyDto fromDtoFamily, Family toDbFamily, int depth) {
@@ -270,19 +263,30 @@ public class TreeService {
         toDbFamily.divorceDate = fromDtoFamily.getDivorceDate();
         toDbFamily.divorcePlace = fromDtoFamily.getDivorcePlace();
 
-        depth--;
-        if (depth <= 0) return;
+        if (depth-- <= 0) return;
 
         // beware of deep recursion, add a depth limit
         Set<IndividualDto> spousesSource = fromDtoFamily.getSpouses();
         if (spousesSource.size() > 0) {
-            Set<SpouseFamily> spousesTarget = toDbFamily.spouses;
+            Set<Individual> spousesTarget = toDbFamily.spouses;
             for (IndividualDto spouseDto : spousesSource) {
-                spousesTarget.add(new SpouseFamily(toDbFamily.id, spouseDto.getId()));
+                var optSpouse = this.individualRepository.findById(spouseDto.getId());
+                if (optSpouse.isPresent()) {
+                    spousesTarget.add(optSpouse.get());
+                }
             }
         }
 
-        // TODO children
+        Set<IndividualDto> childrenSource = fromDtoFamily.getChildren();
+        if (childrenSource.size() > 0) {
+            Set<Individual> childrenTarget = toDbFamily.children;
+            for (IndividualDto childDto : childrenSource) {
+                var optChild = this.individualRepository.findById(childDto.getId());
+                if (optChild.isPresent()) {
+                    childrenTarget.add(optChild.get());
+                }
+            }
+        }
     }
 
     private void map(Family fromDbFamily, FamilyDto toDtoFamily, int depth) {
@@ -291,19 +295,18 @@ public class TreeService {
         toDtoFamily.setDivorceDate(fromDbFamily.divorceDate);
         toDtoFamily.setDivorcePlace(fromDbFamily.divorcePlace);
 
-        depth--;
-        if (depth <= 0) return;
+        if (depth-- <= 0) return;
 
         var sourceSpouses = fromDbFamily.spouses;
         var targetSpouses = toDtoFamily.getSpouses();
-        for (SpouseFamily source : sourceSpouses) {
-            targetSpouses.add(this.getIndividualById(source.spouseId, depth).get());
+        for (Individual source : sourceSpouses) {
+            targetSpouses.add(this.getIndividualById(source.id, depth).get());
         }
 
         var sourceChildren = fromDbFamily.children;
         var targetChildren = toDtoFamily.getChildren();
-        for (ChildFamily source : sourceChildren) {
-            targetChildren.add(this.getIndividualById(source.childId, depth).get());
+        for (Individual source : sourceChildren) {
+            targetChildren.add(this.getIndividualById(source.id, depth).get());
         }
     }
 
@@ -326,8 +329,7 @@ public class TreeService {
         toDbPerson.deathDate = fromDtoPerson.getDeathDate();
         toDbPerson.deathPlace = fromDtoPerson.getDeathPlace();
 
-        depth--;
-        if (depth <= 0) return;
+        if (depth-- <= 0) return;
 
         // TODO
     }
@@ -351,8 +353,7 @@ public class TreeService {
         toDtoPerson.setDeathDate(fromDbPerson.deathDate);
         toDtoPerson.setDeathPlace(fromDbPerson.deathPlace);
 
-        depth--;
-        if (depth <= 0) return;
+        if (depth-- <= 0) return;
 
         var sourceChildFams = fromDbPerson.childFamilies;
         var targetChildFams = toDtoPerson.getChildFamilies();

@@ -1,7 +1,6 @@
 package nl.hdkesting.familyTree.infrastructure.repositories;
 
 import nl.hdkesting.familyTree.core.dto.NameCount;
-import nl.hdkesting.familyTree.core.support.NotYetImplementedException;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
 import nl.hdkesting.familyTree.infrastructure.models.NameCountModel;
 import org.springframework.stereotype.Repository;
@@ -24,16 +23,30 @@ public class MyIndividualRepository extends MyBaseRepository {
      * @return
      */
     public Optional<Individual> findById(long id) {
-        Individual result = boilerPlate(em -> em.createQuery(
+        List<Individual> result = boilerPlate(em -> em.createQuery(
                 "select ind " +
                         "from Individual ind " +
                         "left join fetch ind.spouseFamilies sf " +
                         "left join fetch ind.childFamilies cf " +
                         "where ind.id = :id", Individual.class)
                 .setParameter("id", id)
-                .getSingleResult());
+                .getResultList());
 
-        return Optional.ofNullable(result);
+        if (result.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(result.get(0));
+    }
+
+    public boolean existsById(long id) {
+        Long result = boilerPlate(em -> em.createQuery(
+                "select count(*) " +
+                        "from Individual ind " +
+                        "where ind.id = :id", Long.class)
+                .setParameter("id", id)
+                .getSingleResult());
+        return result.equals(1L); // I expect either 0 or 1 for a count by PK
     }
 
     public List<Individual> findAll() {
@@ -45,12 +58,22 @@ public class MyIndividualRepository extends MyBaseRepository {
         return result;
     }
 
-    public void deleteAll() {
-        throw new NotYetImplementedException("deleteAll must be implemented");
+    public int deleteAll() {
+        Integer result = boilerPlate(em ->
+                em.createQuery(
+                        "delete from Individual")
+                        .executeUpdate()
+        );
+
+        return result;
     }
 
     public void save(Individual individual) {
-        throw new NotYetImplementedException("save Individual must be implemented");
+        var dummy = boilerPlate(em-> {
+            em.merge(individual);
+
+            return 0;
+        });
     }
 
     /**
