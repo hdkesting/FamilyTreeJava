@@ -14,7 +14,7 @@
             <p><input type="text" name="lastname" th:value="${lastname}"></p>
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
-        <!-- TODO result list -->
+        <!-- result list -->
         <div th:if="${list} != null">
             <table>
                 <tr th:each="indi : ${list}">
@@ -22,7 +22,7 @@
                         <span th:replace="fragments/layout :: personline(${indi})" th:remove="tag"></span>
                     </td>
                     <td>
-                        EDIT @I<span th:text="${indi.id}"></span>@
+                        <a href="/admin/edit/person/" th:attrappend="href=${indi.id}">✏</a>
                     </td>
                 </tr>
             </table>
