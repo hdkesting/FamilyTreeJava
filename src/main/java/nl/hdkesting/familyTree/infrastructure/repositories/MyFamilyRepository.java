@@ -22,6 +22,7 @@ public class MyFamilyRepository
      * @return
      */
     public Optional<Family> findById(long id) {
+        System.out.println("-- getting FAM " + id);
         List<Family> result = boilerPlate(em -> em.createQuery(
                 "select fam " +
                         "from Family fam " +

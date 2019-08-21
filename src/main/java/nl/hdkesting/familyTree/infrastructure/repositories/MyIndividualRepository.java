@@ -23,6 +23,7 @@ public class MyIndividualRepository extends MyBaseRepository {
      * @return
      */
     public Optional<Individual> findById(long id) {
+        System.out.println("-- getting INDI " + id);
         List<Individual> result = boilerPlate(em -> em.createQuery(
                 "select ind " +
                         "from Individual ind " +

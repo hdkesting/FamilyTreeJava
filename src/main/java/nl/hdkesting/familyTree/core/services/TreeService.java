@@ -358,13 +358,16 @@ public class TreeService {
         var sourceChildFams = fromDbPerson.childFamilies;
         var targetChildFams = toDtoPerson.getChildFamilies();
         for (Family source : sourceChildFams) {
+            // re-get full family
+            source = this.familyRepository.findById(source.id).get();
             targetChildFams.add(convert(source, depth));
         }
 
         var sourceSpouseFams = fromDbPerson.spouseFamilies;
         var targetSpouseFams = toDtoPerson.getSpouseFamilies();
         for (Family source : sourceSpouseFams) {
-            targetSpouseFams.add(convert(source, depth));
+            source = this.familyRepository.findById(source.id).get();
+            targetSpouseFams.add(convert(source, 1));
         }
     }
 }

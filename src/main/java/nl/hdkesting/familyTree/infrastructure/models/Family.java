@@ -30,14 +30,6 @@ public class Family {
     @Column(name = "divorceplace")
     public String divorcePlace;
 
-    /*
-        @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "spouses",
-            joinColumns = {@JoinColumn(name = "spouseid")},
-            inverseJoinColumns = { @JoinColumn(name = "familyid")})
-
-     */
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "spouses",
         joinColumns = @JoinColumn(name = "familyid", referencedColumnName = "id"),
