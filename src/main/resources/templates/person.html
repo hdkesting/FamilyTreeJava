@@ -1,9 +1,6 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout/baselayout}">
-<head>
-    <title><q th:text="${person.primary.getFullName()}" th:remove="tag"></q> - Family Tree</title>
-</head>
 <body>
     <div layout:fragment="content">
         <p>
