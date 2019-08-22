@@ -8,10 +8,14 @@
     <div layout:fragment="content">
         <h1>Search for names to edit</h1>
         <form method="post">
-            <p>First name</p>
-            <p><input type="text" name="firstname" th:value="${firstname}"/> </p>
-            <p>Last name</p>
-            <p><input type="text" name="lastname" th:value="${lastname}"></p>
+            <div class="form-group">
+                <label for="firstname">First name</label>
+                <input type="text" name="firstname" id="firstname" placeholder="Enter (partial) first name(s)" th:value="${firstname}" class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label for="lastname">Last name</label>
+                <input type="text" name="lastname" id="lastname" placeholder="Enter (partial) last name" th:value="${lastname}" class="form-control">
+           </div>
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
         <!-- result list -->

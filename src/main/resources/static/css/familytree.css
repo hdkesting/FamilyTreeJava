@@ -67,3 +67,7 @@ span.name {
     font-family: Gabriola;
     font-size: 45pt;
 }
+
+span.lastname {
+    font-weight: bolder;
+}
