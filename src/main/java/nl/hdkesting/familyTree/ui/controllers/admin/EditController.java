@@ -47,7 +47,7 @@ public class EditController {
         Optional<IndividualDto> personOpt = this.treeService.getIndividualById(id);
         if (personOpt.isEmpty()) {
             // TODO some message "unknown person"
-            return "redirect:/admin";
+            return "redirect:/admin/search";
         }
 
         var person = personOpt.get();
@@ -76,12 +76,39 @@ public class EditController {
         return "redirect:/admin";
     }
 
-    private LocalDate parseDate(String value) {
-        if (value == null || value.length() == 0) {
-            return null;
+    @GetMapping(path = "person/delete/{id}")
+    public String getPersonDelete(@PathVariable long id, Model model, HttpServletRequest request) {
+        if (!AdminController.isLoggedIn(request)) {
+            return AdminController.LOGIN_REDIRECT;
         }
 
-        // error handling ...
-        return LocalDate.parse(value);
+        Optional<IndividualDto> personOpt = this.treeService.getIndividualById(id);
+        if (personOpt.isEmpty()) {
+            // TODO some message "unknown person"
+            return "redirect:/admin/search";
+        }
+
+        var person = personOpt.get();
+        model.addAttribute("person", new IndividualVm(person));
+
+        return "admin/deletePerson";
+    }
+
+    @PostMapping(path = "person/delete/{id}")
+    public String postPersonDelete(@PathVariable long id, Model model, HttpServletRequest request) {
+        if (!AdminController.isLoggedIn(request)) {
+            return AdminController.LOGIN_REDIRECT;
+        }
+
+        var o = request.getParameter("confirmid");
+        var x = request.getParameterNames();
+        if (o != null) {
+            long confirm = Long.parseLong(o.toString());
+            if (confirm == id) {
+                this.treeService.deleteIndividualById(id);
+            }
+        }
+
+        return "redirect:/admin/search";
     }
 }

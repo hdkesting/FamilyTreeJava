@@ -70,6 +70,10 @@ public class TreeService {
         }
     }
 
+    public boolean deleteIndividualById(long id) {
+        return this.individualRepository.deleteById(id);
+    }
+
     public boolean load(String path) {
         var reader = new GedcomFileReader(this);
         return reader.readFile(path);

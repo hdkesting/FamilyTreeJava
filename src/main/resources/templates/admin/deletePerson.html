@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/adminlayout}">
+<head>
+    <title>Admin - Family Tree delete <q th:text="${person.getFullName()}" th:remove="tag">??</q></title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1>Do you want to delete <span class="name" th:text="${person.getFullName()}">??</span>?</h1>
+    <form method="post" th:object="${person}">
+        <input type="hidden" name="confirmid" th:value="${person.id}"/>
+        <button type="submit" class="btn btn-primary">Yes</button>
+        <button type="button" class="btn btn-secondary" onclick="history.back(-1)">No</button>
+    </form>
+</div>
+</body>
+</html>
