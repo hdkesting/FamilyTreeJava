@@ -123,11 +123,19 @@ public class IndividualVm {
         return this.birthDate != null && this.deathDate != null && this.birthDate.equals(this.deathDate);
     }
 
+    /**
+     * Is there any useful data about birth?
+     * @return
+     */
     public boolean birthDataKnown() {
-        return this.birthDate != null || this.birthPlace != null;
+        return this.birthDate != null || (this.birthPlace != null && this.birthPlace.trim().length() > 0);
     }
 
+    /**
+     * Is there any useful data about death?
+     * @return
+     */
     public boolean deathDataKnown() {
-        return this.deathDate != null || this.deathPlace != null;
+        return this.deathDate != null || (this.deathPlace != null && this.deathPlace.trim().length() > 0);
     }
 }

@@ -39,33 +39,32 @@ public class EditController {
     }
 
     @PostMapping(path = "/person/{id}")
-    public String postEditPerson(@PathVariable long id, Model model, HttpServletRequest request) {
+    public String postEditPerson(@PathVariable long id, IndividualVm personVm, Model model, HttpServletRequest request) {
         if (!AdminController.isLoggedIn(request)) {
             return AdminController.LOGIN_REDIRECT;
         }
 
         // data binding doesn't like dates, so do it the direct way
 
-        Optional<IndividualDto> person1 = this.treeService.getIndividualById(id);
-        if (person1.isEmpty()) {
+        Optional<IndividualDto> personOpt = this.treeService.getIndividualById(id);
+        if (personOpt.isEmpty()) {
             // TODO some message "unknown person"
             return "redirect:/admin";
         }
 
-        var person = person1.get();
+        var person = personOpt.get();
 
-        person.setId(id);
-        person.setFirstNames(request.getParameter("firstNames"));
-        person.setLastName(request.getParameter("lastName"));
-        person.setBirthDate(parseDate(request.getParameter("birthDate")));
-        person.setBirthPlace(request.getParameter("birthPlace"));
-        person.setDeathDate(parseDate(request.getParameter("deathDate")));
-        person.setDeathPlace(request.getParameter("deathPlace"));
-        switch (request.getParameter("sex")) {
-            case "M" :
+        person.setFirstNames(personVm.getFirstNames());
+        person.setLastName(personVm.getLastName());
+        person.setBirthDate(personVm.getBirthDate());
+        person.setBirthPlace(personVm.getBirthPlace());
+        person.setDeathDate(personVm.getDeathDate());
+        person.setDeathPlace(personVm.getDeathPlace());
+        switch (personVm.getSex()) {
+            case 'M' :
                 person.setSex(Sex.Male);
                 break;
-            case "F":
+            case 'F':
                 person.setSex(Sex.Female);
                 break;
             default:
