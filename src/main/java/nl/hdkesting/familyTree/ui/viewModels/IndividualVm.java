@@ -2,6 +2,7 @@ package nl.hdkesting.familyTree.ui.viewModels;
 
 import nl.hdkesting.familyTree.core.dto.IndividualDto;
 import nl.hdkesting.familyTree.core.dto.Sex;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
 
@@ -13,8 +14,12 @@ public class IndividualVm {
     private String firstNames;
     private String lastName;
     private char sex = ' '; // expected: 'M' or 'F'
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate birthDate;
     private String birthPlace;
+
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate deathDate;
     private String deathPlace;
 
@@ -107,5 +112,22 @@ public class IndividualVm {
 
     public boolean isFemale() {
         return this.sex == 'F';
+    }
+
+    /**
+     * Is this person known to have died at birth (meaning both birth and death are known and identical)?
+     * This makes no distinction between "died before birth" and "died the day of birth".
+     * @return
+     */
+    public boolean diedAtBirth() {
+        return this.birthDate != null && this.deathDate != null && this.birthDate.equals(this.deathDate);
+    }
+
+    public boolean birthDataKnown() {
+        return this.birthDate != null || this.birthPlace != null;
+    }
+
+    public boolean deathDataKnown() {
+        return this.deathDate != null || this.deathPlace != null;
     }
 }

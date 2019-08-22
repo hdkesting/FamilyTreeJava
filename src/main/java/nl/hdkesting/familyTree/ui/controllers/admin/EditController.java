@@ -1,6 +1,7 @@
 package nl.hdkesting.familyTree.ui.controllers.admin;
 
 import nl.hdkesting.familyTree.core.dto.IndividualDto;
+import nl.hdkesting.familyTree.core.dto.Sex;
 import nl.hdkesting.familyTree.core.services.TreeService;
 import nl.hdkesting.familyTree.ui.viewModels.IndividualVm;
 import org.springframework.stereotype.Controller;
@@ -60,7 +61,17 @@ public class EditController {
         person.setBirthPlace(request.getParameter("birthPlace"));
         person.setDeathDate(parseDate(request.getParameter("deathDate")));
         person.setDeathPlace(request.getParameter("deathPlace"));
-        // TODO person.setSex( .. );
+        switch (request.getParameter("sex")) {
+            case "M" :
+                person.setSex(Sex.Male);
+                break;
+            case "F":
+                person.setSex(Sex.Female);
+                break;
+            default:
+                person.setSex(Sex.Unknown);
+                break;
+        }
 
         this.treeService.update(person);
 
