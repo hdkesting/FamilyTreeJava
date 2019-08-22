@@ -44,8 +44,6 @@ public class EditController {
             return AdminController.LOGIN_REDIRECT;
         }
 
-        // data binding doesn't like dates, so do it the direct way
-
         Optional<IndividualDto> personOpt = this.treeService.getIndividualById(id);
         if (personOpt.isEmpty()) {
             // TODO some message "unknown person"
