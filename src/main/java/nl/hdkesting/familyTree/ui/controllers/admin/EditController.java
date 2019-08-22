@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Controller
@@ -37,15 +38,42 @@ public class EditController {
     }
 
     @PostMapping(path = "/person/{id}")
-    public String postEditPerson(@PathVariable long id, @ModelAttribute IndividualVm person, Model model, HttpServletRequest request) {
+    public String postEditPerson(@PathVariable long id, Model model, HttpServletRequest request) {
         if (!AdminController.isLoggedIn(request)) {
             return AdminController.LOGIN_REDIRECT;
         }
 
-        assert person != null;
-        // TODO get record from db, update fields, send back to db
+        // data binding doesn't like dates, so do it the direct way
+
+        Optional<IndividualDto> person1 = this.treeService.getIndividualById(id);
+        if (person1.isEmpty()) {
+            // TODO some message "unknown person"
+            return "redirect:/admin";
+        }
+
+        var person = person1.get();
+
+        person.setId(id);
+        person.setFirstNames(request.getParameter("firstNames"));
+        person.setLastName(request.getParameter("lastName"));
+        person.setBirthDate(parseDate(request.getParameter("birthDate")));
+        person.setBirthPlace(request.getParameter("birthPlace"));
+        person.setDeathDate(parseDate(request.getParameter("deathDate")));
+        person.setDeathPlace(request.getParameter("deathPlace"));
+        // TODO person.setSex( .. );
+
+        this.treeService.update(person);
 
         // TODO have the next page show some "person successfully updated" message
         return "redirect:/admin";
+    }
+
+    private LocalDate parseDate(String value) {
+        if (value == null || value.length() == 0) {
+            return null;
+        }
+
+        // error handling ...
+        return LocalDate.parse(value);
     }
 }
