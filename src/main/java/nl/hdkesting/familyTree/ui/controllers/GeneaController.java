@@ -68,7 +68,7 @@ public class GeneaController {
 
         IndividualDto primary = opt.get();
         person.primary = new IndividualVm(primary);
-        model.addAttribute("tabtitle", person.primary.lastName + ", " + person.primary.firstNames);
+        model.addAttribute("tabtitle", person.primary.getLastName() + ", " + person.primary.getFirstNames());
 
         // add all his/her marriages (+children)
         for(var spouseFam : this.treeService.getSpouseFamiliesByIndividualId(id)) {
@@ -84,13 +84,13 @@ public class GeneaController {
 
             // add grandparents (only needed when any parents are known)
             if (person.family.husband != null) {
-                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.husband.id);
+                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.husband.getId());
                 if (!fam.isEmpty()) {
                     person.paternalGrandparents = new FamilyVm(fam.iterator().next());
                 }
             }
             if (person.family.wife != null) {
-                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.wife.id);
+                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.wife.getId());
                 if (!fam.isEmpty()) {
                     person.maternalGrandparents = new FamilyVm(fam.iterator().next());
                 }

@@ -10,12 +10,14 @@
         <form method="post">
             <div class="form-group">
                 <label for="firstname">First name</label>
-                <input type="text" name="firstname" id="firstname" placeholder="Enter (partial) first name(s)" th:value="${firstname}" class="form-control"/>
+                <input type="text" name="firstname" id="firstname"  class="form-control"
+                       placeholder="Enter (partial) first name(s)" th:value="${firstname}"/>
             </div>
             <div class="form-group">
                 <label for="lastname">Last name</label>
-                <input type="text" name="lastname" id="lastname" placeholder="Enter (partial) last name" th:value="${lastname}" class="form-control">
-           </div>
+                <input type="text" name="lastname" id="lastname" class="form-control"
+                       placeholder="Enter (partial) last name" th:value="${lastname}" >
+            </div>
             <button type="submit" class="btn btn-primary">Search</button>
         </form>
         <!-- result list -->

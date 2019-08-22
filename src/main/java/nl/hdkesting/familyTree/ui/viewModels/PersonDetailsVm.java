@@ -22,7 +22,7 @@ public class PersonDetailsVm {
 
     public void setSiblings() {
         for (IndividualVm sib : family.children) {
-            if (sib.id != primary.id) {
+            if (sib.getId() != primary.getId()) {
                 siblings.add(sib);
             }
         }
@@ -37,14 +37,14 @@ public class PersonDetailsVm {
 
     class SortIndividualsByBirth implements Comparator<IndividualVm> {
         public int compare(IndividualVm a, IndividualVm b) {
-            if (a.birthDate == null) {
-                return b.birthDate == null ? 0 : 1;
+            if (a.getBirthDate() == null) {
+                return b.getBirthDate() == null ? 0 : 1;
             }
-            if (b.birthDate == null) {
+            if (b.getBirthDate() == null) {
                 return -1;
             }
 
-            return a.birthDate.compareTo(b.birthDate);
+            return a.getBirthDate().compareTo(b.getBirthDate());
         }
     }
 }

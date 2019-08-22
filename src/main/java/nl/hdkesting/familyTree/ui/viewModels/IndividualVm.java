@@ -9,14 +9,14 @@ import java.time.LocalDate;
  * ViewModel with basic data for a single individual.
  */
 public class IndividualVm {
-    public long id;
-    public String firstNames;
-    public String lastName;
-    public char sex = ' '; // expected: 'M' or 'F'
-    public LocalDate birthDate;
-    public String birthPlace;
-    public LocalDate deathDate;
-    public String deathPlace;
+    private long id;
+    private String firstNames;
+    private String lastName;
+    private char sex = ' '; // expected: 'M' or 'F'
+    private LocalDate birthDate;
+    private String birthPlace;
+    private LocalDate deathDate;
+    private String deathPlace;
 
     public IndividualVm() {
     }
@@ -31,6 +31,70 @@ public class IndividualVm {
         this.birthPlace = dto.getBirthPlace();
         this.deathDate = dto.getDeathDate();
         this.deathPlace = dto.getDeathPlace();
+    }
+
+    public long getId() {
+        return id;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public String getFirstNames() {
+        return firstNames;
+    }
+
+    public void setFirstNames(String firstNames) {
+        this.firstNames = firstNames;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public char getSex() {
+        return sex;
+    }
+
+    public void setSex(char sex) {
+        this.sex = sex;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getBirthPlace() {
+        return birthPlace;
+    }
+
+    public void setBirthPlace(String birthPlace) {
+        this.birthPlace = birthPlace;
+    }
+
+    public LocalDate getDeathDate() {
+        return deathDate;
+    }
+
+    public void setDeathDate(LocalDate deathDate) {
+        this.deathDate = deathDate;
+    }
+
+    public String getDeathPlace() {
+        return deathPlace;
+    }
+
+    public void setDeathPlace(String deathPlace) {
+        this.deathPlace = deathPlace;
     }
 
     public String getFullName() {

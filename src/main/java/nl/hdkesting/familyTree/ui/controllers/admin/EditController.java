@@ -5,10 +5,7 @@ import nl.hdkesting.familyTree.core.services.TreeService;
 import nl.hdkesting.familyTree.ui.viewModels.IndividualVm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -40,11 +37,12 @@ public class EditController {
     }
 
     @PostMapping(path = "/person/{id}")
-    public String postEditPerson(@PathVariable long id, Model model, HttpServletRequest request) {
+    public String postEditPerson(@PathVariable long id, @ModelAttribute IndividualVm person, Model model, HttpServletRequest request) {
         if (!AdminController.isLoggedIn(request)) {
             return AdminController.LOGIN_REDIRECT;
         }
 
+        assert person != null;
         // TODO get record from db, update fields, send back to db
 
         // TODO have the next page show some "person successfully updated" message
