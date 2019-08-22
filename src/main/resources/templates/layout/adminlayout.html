@@ -3,26 +3,21 @@
     <head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <title>$CONTENT_TITLE - Family Tree</title>
+        <title><q th:text="${tabtitle}" th:remove="tag">?</q> - Family Tree Admin</title>
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css" integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
-        <link rel="stylesheet" href="/css/familytree.css" />
-        <link rel="shortcut icon" href="/favicon.ico">
+        <link rel="stylesheet" href="/static/css/familytree.css" />
+        <link rel="shortcut icon" href="/static/favicon.ico">
     </head>
 <body>
     <header>
         <div class="jumbotron">
-            <h1><a href="/">Family Tree - Admin</a></h1>
+            <h1><a href="/admin">Family Tree - Admin</a></h1>
         </div>
     </header>
 
     <div class="container">
         <div layout:fragment="content">
-            <!-- ============================================================================ -->
-            <!-- This content is only used for static prototyping purposes (natural templates)-->
-            <!-- and is therefore entirely optional, as this markup fragment will be included -->
-            <!-- from "fragments/header.html" at runtime.                                     -->
-            <!-- ============================================================================ -->
             <h1>Static content for prototyping purposes only</h1>
             <p>
                 Lorem ipsum dolor sit amet, consectetur adipiscing elit.

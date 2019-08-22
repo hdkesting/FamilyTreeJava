@@ -17,6 +17,8 @@ public class ReportController {
 
     @RequestMapping("/summary")
     public String getSummary(Model model) {
+        model.addAttribute("tabtitle", "Summary");
+
         SummaryVm vm = new SummaryVm(this.treeService.getSummary());
         model.addAttribute("summary", vm);
 

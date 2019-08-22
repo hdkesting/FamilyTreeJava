@@ -18,6 +18,7 @@ import java.util.List;
 @RequestMapping(path = "/admin")
 public class AdminController {
     public static final String LOGIN_SESSION = "LoginSession";
+    public static final String LOGIN_REDIRECT = "redirect:/admin/login";
     private final TreeService treeService;
 
     public AdminController(TreeService treeService) {
@@ -31,20 +32,20 @@ public class AdminController {
             return "redirect:/admin/search";
         } else {
             // not logged in: ask
-            return "redirect:/admin/login";
+            return LOGIN_REDIRECT;
         }
     }
 
     @GetMapping(path = "/search")
     public String getSearch(HttpServletRequest request) {
         // show search page when logged in, else redirect to login
-        return isLoggedIn(request)? "admin/search" : "redirect:/admin/login";
+        return isLoggedIn(request)? "admin/search" : LOGIN_REDIRECT;
     }
 
     @PostMapping(path = "/search")
     public String postSearch(HttpServletRequest request, Model model) {
         if (!isLoggedIn(request)) {
-            return "redirect:/admin/login";
+            return LOGIN_REDIRECT;
         }
 
         String[] first = request.getParameterValues("firstname");
@@ -91,7 +92,7 @@ public class AdminController {
         return "redirect:/";
     }
 
-    private boolean isLoggedIn(HttpServletRequest request) {
+    public static boolean isLoggedIn(HttpServletRequest request) {
         HttpSession session = request.getSession(false); // don't create a new session
         if (session == null) {
             // no session == not logged in

@@ -1,6 +1,5 @@
 package nl.hdkesting.familyTree.ui.controllers;
 
-import nl.hdkesting.familyTree.core.dto.FamilyDto;
 import nl.hdkesting.familyTree.core.dto.IndividualDto;
 import nl.hdkesting.familyTree.core.services.TreeService;
 import nl.hdkesting.familyTree.ui.viewModels.FamilyVm;
@@ -30,6 +29,7 @@ public class GeneaController {
     @GetMapping(path = "/familynames")
     public String getAllFamilyNames(Model model) {
         model.addAttribute("names", this.treeService.getLastNames());
+        model.addAttribute("tabtitle", "All known last names");
 
         return "familynames";
     }
@@ -42,6 +42,8 @@ public class GeneaController {
      */
     @GetMapping(path = "/names/{name}")
     public String getFamily(@PathVariable String name, Model model) {
+        model.addAttribute("tabtitle", "Family list for " + name);
+
         List<IndividualDto> persons = this.treeService.getAllByLastname(name);
         model.addAttribute("persons", persons);
         model.addAttribute("name", name);
@@ -66,6 +68,7 @@ public class GeneaController {
 
         IndividualDto primary = opt.get();
         person.primary = new IndividualVm(primary);
+        model.addAttribute("tabtitle", person.primary.getLastName() + ", " + person.primary.getFirstNames());
 
         // add all his/her marriages (+children)
         for(var spouseFam : this.treeService.getSpouseFamiliesByIndividualId(id)) {
@@ -81,52 +84,19 @@ public class GeneaController {
 
             // add grandparents (only needed when any parents are known)
             if (person.family.husband != null) {
-                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.husband.id);
+                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.husband.getId());
                 if (!fam.isEmpty()) {
                     person.paternalGrandparents = new FamilyVm(fam.iterator().next());
                 }
             }
             if (person.family.wife != null) {
-                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.wife.id);
+                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.wife.getId());
                 if (!fam.isEmpty()) {
                     person.maternalGrandparents = new FamilyVm(fam.iterator().next());
                 }
             }
         }
-        /*
-        // Assume each person is child in (at most) one family. Ignore adoptions etc.
-        if (!primary.getChildFamilies().isEmpty()) {
-            // use only first one for siblings and (grand)parents
-            FamilyDto fam = primary.getChildFamilies().iterator().next();
-            person.family = new FamilyVm(fam);
-            person.setSiblings();
 
-            for (IndividualDto prnt : fam.getSpouses()) {
-                if (prnt.isMale()) {
-                    // paternal grandparents
-                    if (prnt.getChildFamilies().size() > 0) {
-                        FamilyDto f2 = prnt.getChildFamilies().iterator().next();
-                        person.paternalGrandparents = new FamilyVm(f2);
-                    }
-                } else {
-                    // assume isFemale
-                    // maternal grandparents
-                    if (prnt.getChildFamilies().size() > 0) {
-                        FamilyDto f2 = prnt.getChildFamilies().iterator().next();
-                        person.maternalGrandparents = new FamilyVm(f2);
-                    }
-                }
-            }
-        }
-
-        // A person may have (had) multiple marriages.
-        for (FamilyDto dto : primary.getSpouseFamilies()) {
-            FamilyVm fam = new FamilyVm(dto);
-            person.marriages.add(fam);
-        }
-
-
-         */
         person.sortData();
 
         System.out.println("=== Done getting person " + id);
