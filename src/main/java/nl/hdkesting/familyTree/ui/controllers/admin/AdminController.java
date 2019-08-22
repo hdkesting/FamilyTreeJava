@@ -37,9 +37,31 @@ public class AdminController {
     }
 
     @GetMapping(path = "/search")
-    public String getSearch(HttpServletRequest request) {
-        // show search page when logged in, else redirect to login
-        return isLoggedIn(request)? "admin/search" : LOGIN_REDIRECT;
+    public String getSearch(HttpServletRequest request, Model model) {
+        if (!isLoggedIn(request)) {
+            return LOGIN_REDIRECT;
+        }
+
+        String first = (String)request.getSession().getAttribute("firstname");
+        String last = (String)request.getSession().getAttribute("lastname");
+        model.addAttribute("firstname", first);
+        model.addAttribute("lastname", last);
+
+        if (first != null && last != null) {
+            List<IndividualDto> dtoResult = this.treeService.searchByName(first, last);
+
+            model.addAttribute("firstname", first);
+            model.addAttribute("lastname", last);
+
+            List<IndividualVm> result = new ArrayList<>(dtoResult.size());
+            for(IndividualDto dto : dtoResult) {
+                result.add(new IndividualVm(dto));
+            }
+
+            model.addAttribute("list", result);
+        }
+
+        return "admin/search";
     }
 
     @PostMapping(path = "/search")
@@ -48,27 +70,19 @@ public class AdminController {
             return LOGIN_REDIRECT;
         }
 
-        String[] first = request.getParameterValues("firstname");
-        String[] last = request.getParameterValues("lastname");
+        String[] afirst = request.getParameterValues("firstname");
+        String[] alast = request.getParameterValues("lastname");
 
-        if (first == null || last == null) {
-            // safety net
-            return "redirect:/admin/search";
+        if (afirst != null && alast != null) {
+            String first = afirst[0];
+            String last = alast[0];
+
+            request.getSession().setAttribute("firstname", first);
+            request.getSession().setAttribute("lastname", last);
         }
 
-        List<IndividualDto> dtoResult = this.treeService.searchByName(first[0], last[0]);
-
-        model.addAttribute("firstname", first[0]);
-        model.addAttribute("lastname", last[0]);
-
-        List<IndividualVm> result = new ArrayList<>(dtoResult.size());
-        for(IndividualDto dto : dtoResult) {
-            result.add(new IndividualVm(dto));
-        }
-
-        model.addAttribute("list", result);
-
-        return "admin/search";
+        // PRG, sort of
+        return "redirect:/admin/search";
     }
 
     @GetMapping(path = "/login")

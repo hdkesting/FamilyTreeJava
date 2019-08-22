@@ -145,4 +145,27 @@ public class MyIndividualRepository extends MyBaseRepository {
 
         return result;
     }
+
+    /**
+     * Delete an individual by his/her id.
+     * @param id
+     * @return true when succeeded, otherwise false.
+     */
+    public boolean deleteById(long id) {
+        var dels = boilerPlate( em -> {
+            em.createNativeQuery("delete from children where childid = :id")
+                    .setParameter("id", id)
+                    .executeUpdate();
+            em.createNativeQuery("delete from spouses where spouseid = :id")
+                    .setParameter("id", id)
+                    .executeUpdate();
+            var cnt = em.createNativeQuery("delete from Individual where id = :id")
+                    .setParameter("id", id)
+                    .executeUpdate();
+
+            return cnt;
+        });
+
+        return dels > 0;
+    }
 }
