@@ -28,8 +28,9 @@
                         <span th:replace="fragments/layout :: personline(${indi})" th:remove="tag"></span>
                     </td>
                     <td>
-                        <a href="/admin/edit/person/" th:attrappend="href=${indi.id}" title="edit">✏</a>
-                        <a href="/admin/edit/person/delete/" th:attrappend="href=${indi.id}" title="delete">🗑</a>
+                        <a href="/admin/person/edit/" th:attrappend="href=${indi.id}" title="edit">✏</a>
+                        <a href="/admin/person/delete/" th:attrappend="href=${indi.id}" title="delete">🗑</a>
+                        <a href="/admin/person/show/" th:attrappend="href=${indi.id}" title="show">🔎</a>
                     </td>
                 </tr>
             </table>

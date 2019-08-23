@@ -58,7 +58,6 @@ public class GeneaController {
      */
     @GetMapping(path = "/person/{id}")
     public String getPerson(@PathVariable long id, Model model) {
-        System.out.println("=== Start getting person " + id);
         PersonDetailsVm person = new PersonDetailsVm();
 
         Optional<IndividualDto> opt = this.treeService.getIndividualById(id);
@@ -99,7 +98,6 @@ public class GeneaController {
 
         person.sortData();
 
-        System.out.println("=== Done getting person " + id);
         model.addAttribute("person", person);
         return "person";
     }

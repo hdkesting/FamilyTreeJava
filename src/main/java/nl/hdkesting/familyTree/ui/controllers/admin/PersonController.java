@@ -3,7 +3,9 @@ package nl.hdkesting.familyTree.ui.controllers.admin;
 import nl.hdkesting.familyTree.core.dto.IndividualDto;
 import nl.hdkesting.familyTree.core.dto.Sex;
 import nl.hdkesting.familyTree.core.services.TreeService;
+import nl.hdkesting.familyTree.ui.viewModels.FamilyVm;
 import nl.hdkesting.familyTree.ui.viewModels.IndividualVm;
+import nl.hdkesting.familyTree.ui.viewModels.PersonDetailsVm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -13,15 +15,15 @@ import java.time.LocalDate;
 import java.util.Optional;
 
 @Controller
-@RequestMapping(path = "/admin/edit")
-public class EditController {
+@RequestMapping(path = "/admin/person")
+public class PersonController {
     private final TreeService treeService;
 
-    public EditController(TreeService treeService) {
+    public PersonController(TreeService treeService) {
         this.treeService = treeService;
     }
 
-    @GetMapping(path = "/person/{id}")
+    @GetMapping(path = "/edit/{id}")
     public String getEditPerson(@PathVariable long id, Model model, HttpServletRequest request) {
         if (!AdminController.isLoggedIn(request)) {
             return AdminController.LOGIN_REDIRECT;
@@ -38,7 +40,7 @@ public class EditController {
         return "admin/editPerson";
     }
 
-    @PostMapping(path = "/person/{id}")
+    @PostMapping(path = "/edit/{id}")
     public String postEditPerson(@PathVariable long id, IndividualVm personVm, Model model, HttpServletRequest request) {
         if (!AdminController.isLoggedIn(request)) {
             return AdminController.LOGIN_REDIRECT;
@@ -76,7 +78,7 @@ public class EditController {
         return "redirect:/admin";
     }
 
-    @GetMapping(path = "person/delete/{id}")
+    @GetMapping(path = "/delete/{id}")
     public String getPersonDelete(@PathVariable long id, Model model, HttpServletRequest request) {
         if (!AdminController.isLoggedIn(request)) {
             return AdminController.LOGIN_REDIRECT;
@@ -94,7 +96,7 @@ public class EditController {
         return "admin/deletePerson";
     }
 
-    @PostMapping(path = "person/delete/{id}")
+    @PostMapping(path = "/delete/{id}")
     public String postPersonDelete(@PathVariable long id, Model model, HttpServletRequest request) {
         if (!AdminController.isLoggedIn(request)) {
             return AdminController.LOGIN_REDIRECT;
@@ -110,5 +112,45 @@ public class EditController {
         }
 
         return "redirect:/admin/search";
+    }
+
+    @GetMapping(path = "/show/{id}")
+    public String showPerson(@PathVariable long id, Model model, HttpServletRequest request) {
+        if (!AdminController.isLoggedIn(request)) {
+            return AdminController.LOGIN_REDIRECT;
+        }
+
+        // load "personDetailsVm", same as in EditController, but skip the grandparents
+        PersonDetailsVm person = new PersonDetailsVm();
+
+        Optional<IndividualDto> opt = this.treeService.getIndividualById(id);
+        if (opt.isEmpty()) {
+            return "redirect:/admin/search";
+        }
+
+        IndividualDto primary = opt.get();
+        person.primary = new IndividualVm(primary);
+        model.addAttribute("tabtitle", person.primary.getLastName() + ", " + person.primary.getFirstNames());
+
+        // add all his/her marriages (+children)
+        for(var spouseFam : this.treeService.getSpouseFamiliesByIndividualId(id)) {
+            person.marriages.add(new FamilyVm(spouseFam));
+        }
+
+        // add parents
+        var childFams = this.treeService.getChildFamiliesByIndividualId(id);
+        if (!childFams.isEmpty()) {
+            // use the first one, ignore potential others
+            person.family = new FamilyVm(childFams.iterator().next());
+            person.setSiblings();
+
+            // SKIP grandparents
+        }
+
+        person.sortData();
+
+        model.addAttribute("person", person);
+
+        return "admin/showPerson";
     }
 }

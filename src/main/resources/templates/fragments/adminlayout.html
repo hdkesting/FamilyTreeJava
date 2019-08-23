@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Standard blocks</title>
+</head>
+<body>
+
+<header th:fragment="header">
+    <div class="jumbotron">
+        <h1><a href="/">Family Tree</a></h1>
+    </div>
+</header>
+
+<!--
+    parameter person is of type IndividualVm
+    parameter css is css class
+ -->
+<div th:fragment="personblock(person, css)" th:if="${person} != null" th:class="${css}">
+    <p>
+        <span th:if="${person.isMale()}">👨</span>
+        <span th:if="${person.isFemale()}">👩</span>
+        <a href="/admin/person/show/" th:attrappend="href=${person.id}" th:text="${person.getFullName()}"></a>
+        <a href="/admin/person/edit/" th:attrappend="href=${person.id}" title="edit">✏</a>
+        <a href="/admin/person/delete/" th:attrappend="href=${person.id}" title="delete">🗑</a>
+    </p>
+    <p th:if="${person.diedAtBirth()}">✤&dagger; <span th:text="${person.birthDate}"></span> <span th:text="${person.birthPlace}"></span></p>
+    <p th:if="${!person.diedAtBirth() && person.birthDataKnown()}">✤ <span th:text="${person.birthDate}"></span> <span th:text="${person.birthPlace}"></span></p>
+    <p th:if="${!person.diedAtBirth() && person.deathDataKnown()}">&dagger; <span th:text="${person.deathDate}"></span> <span th:text="${person.deathPlace}"></span></p>
+</div>
+
+<!-- parameter person is of type IndividualVm -->
+<span th:fragment="personline(person)" th:if="${person} != null">
+    <span th:if="${person.isMale()}">👨</span>
+    <span th:if="${person.isFemale()}">👩</span>
+    <a href="/admin/person/show/" th:attrappend="href=${person.id}">
+        <span th:text="${person.firstNames}">-</span>
+        <span class="lastname" th:text="${person.lastName}">-</span>
+    </a>
+        <a href="/admin/person/edit/" th:attrappend="href=${person.id}" title="edit">✏</a>
+        <a href="/admin/person/delete/" th:attrappend="href=${person.id}" title="delete">🗑</a>
+    <p th:if="${person.diedAtBirth()}" th:remove="tag">, ✤&dagger; <span th:text="${person.birthDate}" th:remove="tag"></span> <span th:text="${person.birthPlace}" th:remove="tag"></span></p>
+    <p th:if="${!person.diedAtBirth() && person.birthDataKnown()}" th:remove="tag">, ✤ <span th:text="${person.birthDate}" th:remove="tag"></span> <span th:text="${person.birthPlace}" th:remove="tag"></span></p>
+    <p th:if="${!person.diedAtBirth() && person.deathDataKnown()}" th:remove="tag">, &dagger; <span th:text="${person.deathDate}" th:remove="tag"></span> <span th:text="${person.deathPlace}" th:remove="tag"></span></p>
+</span>
+
+<!-- parameter is of type FamilyVm -->
+<div th:fragment="familyblock(family)" th:if="${family} != null" class="marriage">
+    <p style="font-size: x-large">&times;</p>
+    <p th:if="${family.marriageDate} != null"><span title="Married">⚭</span> <span th:text="${family.marriageDate}"></span> <span th:text="${family.marriagePlace}"></span></p>
+    <p th:if="${family.divorceDate} != null"><span title="Divorced">⚮</span> <span th:text="${family.divorceDate}"></span> <span th:text="${family.divorcePlace}"></span></p>
+</div>
+
+</body>
+</html>

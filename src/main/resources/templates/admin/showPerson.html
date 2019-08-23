@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/adminlayout}">
+<head>
+    <title>Admin - Family Tree: <q th:text="${person.primary.getFullName()}" th:remove="tag">??</q></title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h1>Information about <span th:text="${person.primary.getFullName()}" class="name">{person}</span></h1>
+
+    <h2>Descent</h2>
+    <table class="table table-bordered pedigree">
+        <tr>
+            <td colspan="2">
+                <!-- primary + siblings -->
+                <div>
+                    <div th:replace="fragments/adminlayout :: personblock(${person.primary}, 'primary')">primary</div>
+                    <q th:each="sibling : ${person.siblings}" th:remove="tag">
+                        <div th:replace="fragments/adminlayout :: personblock(${sibling}, 'sibling')">sibling</div>
+                    </q>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <div>
+                    <div th:replace="fragments/adminlayout :: personblock(${person.family.husband}, 'parent')">father</div>
+                    <div th:replace="fragments/adminlayout :: familyblock(${person.family})"></div>
+                    <div th:replace="fragments/adminlayout :: personblock(${person.family.wife}, 'parent')">mother</div>
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <q th:if="${!person.marriages.isEmpty()}" th:remove="tag">
+        <h2>Marriage<span th:if="${person.marriages.size()} > 1" th:remove="tag">s</span></h2>
+        <div th:each="family : ${person.marriages}">
+            <p th:if="${family.wife != null && family.wife.id != person.primary.id}">
+                <strong>Married to</strong> <span th:replace="fragments/adminlayout :: personline(${family.wife})">
+            </p>
+            <p th:if="${family.husband != null && family.husband.id != person.primary.id}">
+                Married to <span th:replace="fragments/adminlayout :: personline(${family.husband})">
+            </p>
+            <p th:if="${!family.children.isEmpty()}">
+                <strong>Children</strong>
+            <ul>
+                <li th:each="child : ${family.children}"><span th:replace="fragments/adminlayout :: personline(${child})"></span></li>
+            </ul>
+            </p>
+            <p th:if="${family.children.isEmpty()}">
+                <span>No (known) children</span>
+            </p>
+        </div>
+    </q>
+</div>
+</body>
+</html>
