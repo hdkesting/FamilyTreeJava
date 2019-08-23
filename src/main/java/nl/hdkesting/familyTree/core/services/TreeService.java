@@ -130,6 +130,7 @@ public class TreeService {
         if (spouseIds != null) {
             // check for spouses to remove
             Set<Individual> spouses = family.spouses;
+            List<Individual> toremove = new ArrayList<>();
             for (Individual spouse : spouses) {
                 boolean found = false;
                 for (long id : spouseIds) {
@@ -137,8 +138,12 @@ public class TreeService {
                 }
 
                 if (!found) {
-                    spouses.remove(spouse); // can I modify the list?
+                    toremove.add(spouse);
                 }
+            }
+
+            if (!toremove.isEmpty()) {
+                spouses.removeAll(toremove);
             }
 
             // check for spouses to add
@@ -158,6 +163,7 @@ public class TreeService {
         if (childIds != null) {
             // check for children to remove
             Set<Individual> children = family.children;
+            List<Individual> toremove = new ArrayList<>();
             for (Individual child : children) {
                 boolean found = false;
                 for (long id : childIds) {
@@ -165,8 +171,12 @@ public class TreeService {
                 }
 
                 if (!found) {
-                    children.remove(child);
+                    toremove.add(child);
                 }
+            }
+
+            if (!toremove.isEmpty()) {
+                children.removeAll(toremove);
             }
 
             // check for children to add
