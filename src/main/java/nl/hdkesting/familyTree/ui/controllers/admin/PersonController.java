@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.Optional;
 
 @Controller
@@ -75,6 +74,10 @@ public class PersonController {
         this.treeService.update(person);
 
         // TODO have the next page show some "person successfully updated" message
+        long primary = Long.parseLong("0" + request.getParameter("primary"));
+        if (primary > 0) {
+            return "redirect:/admin/person/show/" + primary;
+        }
         return "redirect:/admin";
     }
 

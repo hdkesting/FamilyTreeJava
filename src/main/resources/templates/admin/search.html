@@ -25,7 +25,7 @@
             <table>
                 <tr th:each="indi : ${list}">
                     <td>
-                        <span th:replace="fragments/adminlayout :: personline(${indi})" th:remove="tag"></span>
+                        <span th:replace="fragments/adminlayout :: personline(${indi}, 0)" th:remove="tag"></span>
                     </td>
                 </tr>
             </table>
