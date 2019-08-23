@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FamilyVm {
+    public long id;
     public IndividualVm husband;
     public IndividualVm wife;
     public final List<IndividualVm> children = new ArrayList<>();
@@ -20,6 +21,7 @@ public class FamilyVm {
     public FamilyVm() {}
 
     public FamilyVm(FamilyDto dto) {
+        this.id = dto.getId();
         this.marriageDate = dto.getMarriageDate();
         this.marriagePlace = dto.getMarriagePlace();
         this.divorceDate = dto.getDivorceDate();

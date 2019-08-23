@@ -11,7 +11,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
-import java.time.LocalDate;
 import java.util.Optional;
 
 @Controller
@@ -152,5 +151,23 @@ public class PersonController {
         model.addAttribute("person", person);
 
         return "admin/showPerson";
+    }
+
+    /**
+     * Add a new person.
+     * @param primary the primary person (id) to return back to
+     * @param cfam the family (id) the new person will be a child of
+     * @param sfam the family (id) the new person will be spouse of
+     * @return
+     */
+    @GetMapping(path = "/add")
+    public String getAddPerson(
+            @RequestParam(value = "primary", required = true) long primary,
+            @RequestParam(value = "cfam", required = false) Long cfam,
+            @RequestParam(value = "sfam", required = false) Long sfam) {
+        // TODO preserve values
+
+        // re-use edit template
+        return "admin/editPerson";
     }
 }
