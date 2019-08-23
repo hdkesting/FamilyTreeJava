@@ -8,6 +8,10 @@
 <div layout:fragment="content">
     <h1>Edit page for <span class="name" th:text="${person.getFullName()}">??</span> </h1>
     <form method="post" th:object="${person}">
+        <input type="hidden" name="primary" th:value="${primary}">
+        <input type="hidden" name="cfam" th:value="${cfam}">
+        <input type="hidden" name="sfam" th:value="${sfam}">
+
         <div class="form-group">
             <label for="firstname">First name(s)</label>
             <input type="text" id="firstname" th:field="*{firstNames}" class="form-control"

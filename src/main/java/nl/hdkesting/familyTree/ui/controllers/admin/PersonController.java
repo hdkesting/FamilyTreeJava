@@ -11,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
 import java.util.Optional;
 
 @Controller
@@ -164,10 +165,63 @@ public class PersonController {
     public String getAddPerson(
             @RequestParam(value = "primary", required = true) long primary,
             @RequestParam(value = "cfam", required = false) Long cfam,
-            @RequestParam(value = "sfam", required = false) Long sfam) {
-        // TODO preserve values
+            @RequestParam(value = "sfam", required = false) Long sfam,
+            Model model,
+            HttpServletRequest request) {
+        if (!AdminController.isLoggedIn(request)) {
+            return AdminController.LOGIN_REDIRECT;
+        }
+
+        // preserve supplied values
+        model.addAttribute("primary", primary);
+        model.addAttribute("cfam", cfam);
+        model.addAttribute("sfam", sfam);
+        // add empty person model, so template doesn't have to deal with a null
+        model.addAttribute("person", new IndividualVm());
 
         // re-use edit template
         return "admin/editPerson";
+    }
+
+    @PostMapping(path = "/add")
+    public String postAddPerson(IndividualVm personVm, HttpServletRequest request) {
+        if (!AdminController.isLoggedIn(request)) {
+            return AdminController.LOGIN_REDIRECT;
+        }
+
+        long primary = Long.parseLong(request.getParameter("primary"));
+        long cfam = Long.parseLong("0" + request.getParameter("cfam"));
+        long sfam = Long.parseLong("0" + request.getParameter("sfam"));
+
+        var person = new IndividualDto();
+        person.setFirstNames(personVm.getFirstNames());
+        person.setLastName(personVm.getLastName());
+        person.setBirthDate(personVm.getBirthDate());
+        person.setBirthPlace(personVm.getBirthPlace());
+        person.setDeathDate(personVm.getDeathDate());
+        person.setDeathPlace(personVm.getDeathPlace());
+        switch (personVm.getSex()) {
+            case 'M' :
+                person.setSex(Sex.Male);
+                break;
+            case 'F':
+                person.setSex(Sex.Female);
+                break;
+            default:
+                person.setSex(Sex.Unknown);
+                break;
+        }
+
+        long newid = this.treeService.add(person);
+        // add this new person as either spouse or child to a family
+        if (cfam > 0) {
+            this.treeService.addChild(cfam, newid);
+        }
+
+        if (sfam > 0) {
+            this.treeService.addSpouse(sfam, newid);
+        }
+
+        return "redirect:/admin/person/show/" + primary;
     }
 }

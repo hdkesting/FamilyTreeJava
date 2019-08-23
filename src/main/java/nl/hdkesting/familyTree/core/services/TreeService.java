@@ -83,12 +83,25 @@ public class TreeService {
         if (person == null) throw new IllegalArgumentException("'person' cannot be null");
         if (person.getId() <= 0) throw new IllegalArgumentException("person's id must be >0");
 
+        // person must have an id, but may not yet exist in the database (when importing)
         long id = person.getId();
         Individual dbPerson = individualRepository.findById(id)
                 .orElseGet(() -> getNewIndividual(id));
 
         map(person, dbPerson);
         individualRepository.save(dbPerson);
+    }
+
+    public long add(IndividualDto person) {
+        if (person == null) throw new IllegalArgumentException("'person' cannot be null");
+        if (person.getId() != 0) throw new IllegalArgumentException("new person's id must be ==0");
+
+        Individual dbPerson = getNewIndividual(0);
+        map(person, dbPerson);
+
+        var id = individualRepository.add(dbPerson);
+        person.setId(id);
+        return id;
     }
 
     public void update(FamilyDto family) {
@@ -114,59 +127,93 @@ public class TreeService {
         // check against stored relations, update where needed
         Family family = optFamily.get();
 
-        // check for spouses to remove
-        Set<Individual> spouses = family.spouses;
-        for (Individual spouse : spouses) {
-            boolean found = false;
-            for (long id : spouseIds) {
-                found = found || id == spouse.id;
-            }
-
-            if (!found) {
-                spouses.remove(spouse); // can I modify the list?
-            }
-        }
-
-        // check for spouses to add
-        for (long id : spouseIds) {
-            boolean found = false;
+        if (spouseIds != null) {
+            // check for spouses to remove
+            Set<Individual> spouses = family.spouses;
             for (Individual spouse : spouses) {
-                found = found || id == spouse.id;
+                boolean found = false;
+                for (long id : spouseIds) {
+                    found = found || id == spouse.id;
+                }
+
+                if (!found) {
+                    spouses.remove(spouse); // can I modify the list?
+                }
             }
 
-            if (!found) {
-                var optSpouse = this.individualRepository.findById(id);
-                optSpouse.ifPresent(spouses::add);
+            // check for spouses to add
+            for (long id : spouseIds) {
+                boolean found = false;
+                for (Individual spouse : spouses) {
+                    found = found || id == spouse.id;
+                }
+
+                if (!found) {
+                    var optSpouse = this.individualRepository.findById(id);
+                    optSpouse.ifPresent(spouses::add);
+                }
             }
         }
 
-        // check for children to remove
-        Set<Individual> children = family.children;
-        for (Individual child : children) {
-            boolean found = false;
-            for (long id : childIds) {
-                found = found || id == child.id;
-            }
-
-            if (!found) {
-                children.remove(child);
-            }
-        }
-
-        // check for children to add
-        for (long id : childIds) {
-            boolean found = false;
+        if (childIds != null) {
+            // check for children to remove
+            Set<Individual> children = family.children;
             for (Individual child : children) {
-                found = found || id == child.id;
+                boolean found = false;
+                for (long id : childIds) {
+                    found = found || id == child.id;
+                }
+
+                if (!found) {
+                    children.remove(child);
+                }
             }
 
-            if (!found) {
-                var optChild = this.individualRepository.findById(id);
-                optChild.ifPresent(children::add);
+            // check for children to add
+            for (long id : childIds) {
+                boolean found = false;
+                for (Individual child : children) {
+                    found = found || id == child.id;
+                }
+
+                if (!found) {
+                    var optChild = this.individualRepository.findById(id);
+                    optChild.ifPresent(children::add);
+                }
             }
         }
 
         familyRepository.save(family);
+    }
+
+    public void addChild(long familyId, long childId) {
+        var optFamily =  familyRepository.findById(familyId);
+
+        if (optFamily.isEmpty()) {
+            // just ignore or should I throw ??
+            return;
+        }
+        Family family = optFamily.get();
+        var optChild = this.individualRepository.findById(childId);
+        if (optChild.isPresent()) {
+            family.children.add(optChild.get());
+            familyRepository.save(family);
+        }
+    }
+
+    public void addSpouse(long familyId, long spouseId) {
+        var optFamily =  familyRepository.findById(familyId);
+
+        if (optFamily.isEmpty()) {
+            // just ignore or should I throw ??
+            return;
+        }
+        Family family = optFamily.get();
+        var optSpouse = this.individualRepository.findById(spouseId);
+        if (optSpouse.isPresent()) {
+            family.spouses.add(optSpouse.get());
+            familyRepository.save(family);
+        }
     }
 
     public Summary getSummary() {

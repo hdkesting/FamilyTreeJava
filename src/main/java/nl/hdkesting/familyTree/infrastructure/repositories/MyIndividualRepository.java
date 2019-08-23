@@ -77,6 +77,20 @@ public class MyIndividualRepository extends MyBaseRepository {
         });
     }
 
+    public long add(Individual individual) {
+        var newid = boilerPlate(em-> {
+            long max = em.createQuery("select max(id) from Individual", Long.class)
+                    .getSingleResult();
+            max++;
+            individual.id = max;
+            em.merge(individual);
+
+            return max;
+        });
+
+        return newid;
+    }
+
     /**
      * Returns the total count of individuals.
      * @return
