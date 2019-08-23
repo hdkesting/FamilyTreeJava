@@ -16,14 +16,15 @@
     parameter person is of type IndividualVm
     parameter css is css class
  -->
-<div th:fragment="personblock(person, css)" th:if="${person} != null" th:class="${css}">
+<div th:fragment="personblock(person, css, primary)" th:if="${person} != null" th:class="${css}">
     <p>
-        <a href="/person/" th:attrappend="href=${person.id}">
-            <span th:text="${person.firstNames}">first</span>
-            <span class="lastname" th:text="${person.lastName}">last</span>
-        </a>
-        <strong th:if="${person.isMale()}">&male;👨</strong>
-        <strong th:if="${person.isFemale()}">&female;👩</strong>
+        <span th:if="${person.isMale()}">👨</span>
+        <span th:if="${person.isFemale()}">👩</span>
+        <span th:text="${person.firstNames}">first</span>
+        <span class="lastname" th:text="${person.lastName}">last</span>
+        <a th:href="@{/admin/person/show/__${person.id}__(primary=${primary})}" title="show">🔎</a>
+        <a th:href="@{/admin/person/edit/__${person.id}__(primary=${primary})}" title="edit">✏</a>
+        <a th:href="@{/admin/person/delete/__${person.id}__(primary=${primary})}" title="delete">🗑</a>
     </p>
     <p th:if="${person.diedAtBirth()}">✤&dagger; <span th:text="${person.birthDate}"></span> <span th:text="${person.birthPlace}"></span></p>
     <p th:if="${!person.diedAtBirth() && person.birthDataKnown()}">✤ <span th:text="${person.birthDate}"></span> <span th:text="${person.birthPlace}"></span></p>
@@ -31,23 +32,27 @@
 </div>
 
 <!-- parameter person is of type IndividualVm -->
-<span th:fragment="personline(person)" th:if="${person} != null">
-    <a href="/person/" th:attrappend="href=${person.id}">
+<span th:fragment="personline(person, primary)" th:if="${person} != null">
+    <span th:if="${person.isMale()}">👨</span>
+    <span th:if="${person.isFemale()}">👩</span>
         <span th:text="${person.firstNames}">first</span>
         <span class="lastname" th:text="${person.lastName}">last</span>
-    </a>
-    <strong th:if="${person.isMale()}">&male;👨</strong>
-    <strong th:if="${person.isFemale()}">&female;👩</strong>
+        <a th:href="@{/admin/person/show/__${person.id}__(primary=${primary})}" title="show">🔎</a>
+        <a th:href="@{/admin/person/edit/__${person.id}__(primary=${primary})}" title="edit">✏</a>
+        <a th:href="@{/admin/person/delete/__${person.id}__(primary=${primary})}" title="delete">🗑</a>
     <p th:if="${person.diedAtBirth()}" th:remove="tag">, ✤&dagger; <span th:text="${person.birthDate}" th:remove="tag"></span> <span th:text="${person.birthPlace}" th:remove="tag"></span></p>
     <p th:if="${!person.diedAtBirth() && person.birthDataKnown()}" th:remove="tag">, ✤ <span th:text="${person.birthDate}" th:remove="tag"></span> <span th:text="${person.birthPlace}" th:remove="tag"></span></p>
     <p th:if="${!person.diedAtBirth() && person.deathDataKnown()}" th:remove="tag">, &dagger; <span th:text="${person.deathDate}" th:remove="tag"></span> <span th:text="${person.deathPlace}" th:remove="tag"></span></p>
 </span>
 
 <!-- parameter is of type FamilyVm -->
-<div th:fragment="familyblock(family)" th:if="${family} != null" class="marriage">
+<div th:fragment="familyblock(family, primary)" th:if="${family} != null" class="marriage">
     <p style="font-size: x-large">&times;</p>
     <p th:if="${family.marriageDate} != null"><span title="Married">⚭</span> <span th:text="${family.marriageDate}"></span> <span th:text="${family.marriagePlace}"></span></p>
     <p th:if="${family.divorceDate} != null"><span title="Divorced">⚮</span> <span th:text="${family.divorceDate}"></span> <span th:text="${family.divorcePlace}"></span></p>
+    <p>
+        <a th:href="@{/admin/family/edit/__${family.id}__(primary=${primary})}" title="edit family">✏</a>
+    </p>
 </div>
 
 </body>

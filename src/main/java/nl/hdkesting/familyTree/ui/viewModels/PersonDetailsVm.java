@@ -21,7 +21,7 @@ public class PersonDetailsVm {
     public final List<FamilyVm> marriages = new ArrayList<>();
 
     public void setSiblings() {
-        for (IndividualVm sib : family.children) {
+        for (IndividualVm sib : family.getChildren()) {
             if (sib.getId() != primary.getId()) {
                 siblings.add(sib);
             }
@@ -31,7 +31,7 @@ public class PersonDetailsVm {
     public void sortData() {
         Collections.sort(siblings, new SortIndividualsByBirth());
         for (FamilyVm fam : this.marriages) {
-            Collections.sort(fam.children, new SortIndividualsByBirth());
+            Collections.sort(fam.getChildren(), new SortIndividualsByBirth());
         }
     }
 
