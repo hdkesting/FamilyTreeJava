@@ -20,7 +20,9 @@
     <p>
         <span th:if="${person.isMale()}">👨</span>
         <span th:if="${person.isFemale()}">👩</span>
-        <a href="/admin/person/show/" th:attrappend="href=${person.id}" th:text="${person.getFullName()}"></a>
+        <span th:text="${person.firstNames}">first</span>
+        <span class="lastname" th:text="${person.lastName}">last</span>
+        <a href="/admin/person/show/" th:attrappend="href=${person.id}" title="show">🔎</a>
         <a href="/admin/person/edit/" th:attrappend="href=${person.id}" title="edit">✏</a>
         <a href="/admin/person/delete/" th:attrappend="href=${person.id}" title="delete">🗑</a>
     </p>
@@ -33,10 +35,9 @@
 <span th:fragment="personline(person)" th:if="${person} != null">
     <span th:if="${person.isMale()}">👨</span>
     <span th:if="${person.isFemale()}">👩</span>
-    <a href="/admin/person/show/" th:attrappend="href=${person.id}">
-        <span th:text="${person.firstNames}">-</span>
-        <span class="lastname" th:text="${person.lastName}">-</span>
-    </a>
+        <span th:text="${person.firstNames}">first</span>
+        <span class="lastname" th:text="${person.lastName}">last</span>
+        <a href="/admin/person/show/" th:attrappend="href=${person.id}" title="show">🔎</a>
         <a href="/admin/person/edit/" th:attrappend="href=${person.id}" title="edit">✏</a>
         <a href="/admin/person/delete/" th:attrappend="href=${person.id}" title="delete">🗑</a>
     <p th:if="${person.diedAtBirth()}" th:remove="tag">, ✤&dagger; <span th:text="${person.birthDate}" th:remove="tag"></span> <span th:text="${person.birthPlace}" th:remove="tag"></span></p>

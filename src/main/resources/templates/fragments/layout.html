@@ -18,7 +18,10 @@
  -->
 <div th:fragment="personblock(person, css)" th:if="${person} != null" th:class="${css}">
     <p>
-        <a href="/person/" th:attrappend="href=${person.id}" th:text="${person.getFullName()}"></a>
+        <a href="/person/" th:attrappend="href=${person.id}">
+            <span th:text="${person.firstNames}">first</span>
+            <span class="lastname" th:text="${person.lastName}">last</span>
+        </a>
         <strong th:if="${person.isMale()}">&male;👨</strong>
         <strong th:if="${person.isFemale()}">&female;👩</strong>
     </p>
@@ -30,8 +33,8 @@
 <!-- parameter person is of type IndividualVm -->
 <span th:fragment="personline(person)" th:if="${person} != null">
     <a href="/person/" th:attrappend="href=${person.id}">
-        <span th:text="${person.firstNames}">-</span>
-        <span class="lastname" th:text="${person.lastName}">-</span>
+        <span th:text="${person.firstNames}">first</span>
+        <span class="lastname" th:text="${person.lastName}">last</span>
     </a>
     <strong th:if="${person.isMale()}">&male;👨</strong>
     <strong th:if="${person.isFemale()}">&female;👩</strong>
