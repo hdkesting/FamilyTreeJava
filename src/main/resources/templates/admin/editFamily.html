@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/adminlayout}">
+<head>
+    <title>Admin - Family Tree edit family</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <form method="post" th:object="${family}">
+        <input type="hidden" name="primary" th:value="${primary}">
+
+        <h2>Spouses</h2>
+        <div th:if="${family.husband!=null}" th:replace="fragments/adminlayout :: personblock(${family.husband}, 'parent', ${primary})">father</div>
+        <div th:if="${family.wife!=null}" th:replace="fragments/adminlayout :: personblock(${family.wife}, 'parent', ${primary})">father</div>
+
+        <h2>Children</h2>
+        <div th:each="child : *{children}" th:replace="fragments/adminLayout :: personblock(${child}, 'child', ${primary})">child(ren)</div>
+
+        <div class="form-group">
+            <label for="marriagedate">Marriage date</label>
+            <input type="date" id="marriagedate" th:field="*{marriageDate}" class="form-control"
+                   placeholder="Marriage date">
+        </div>
+        <div class="form-group">
+            <label for="marriageplace">Marriage place</label>
+            <input type="text" id="marriageplace" th:field="*{marriagePlace}" class="form-control"
+                   placeholder="Marriage place">
+        </div>
+        <div class="form-group">
+            <label for="divorcedate">Divorce date</label>
+            <input type="date" id="divorcedate" th:field="*{divorceDate}" class="form-control"
+                   placeholder="Divorce date">
+        </div>
+        <div class="form-group">
+            <label for="divorceplace">Divorce place</label>
+            <input type="text" id="divorceplace" th:field="*{divorcePlace}" class="form-control"
+                   placeholder="Divorce place">
+        </div>
+
+        <button type="submit" class="btn btn-primary">Submit</button>
+        <button type="button" class="btn btn-secondary" onclick="history.back(-1)">Cancel</button>
+    </form>
+</div>
+</body>
+</html>

@@ -82,14 +82,14 @@ public class GeneaController {
             person.setSiblings();
 
             // add grandparents (only needed when any parents are known)
-            if (person.family.husband != null) {
-                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.husband.getId());
+            if (person.family.getHusband() != null) {
+                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.getHusband().getId());
                 if (!fam.isEmpty()) {
                     person.paternalGrandparents = new FamilyVm(fam.iterator().next());
                 }
             }
-            if (person.family.wife != null) {
-                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.wife.getId());
+            if (person.family.getWife() != null) {
+                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.getWife().getId());
                 if (!fam.isEmpty()) {
                     person.maternalGrandparents = new FamilyVm(fam.iterator().next());
                 }

@@ -27,7 +27,7 @@
                 <div>
                     <div th:if="${person.family.husband!=null}" th:replace="fragments/adminlayout :: personblock(${person.family.husband}, 'parent', ${person.primary.getId()})">father</div>
                     <div th:if="${person.family.husband==null}" class="parent"><a th:href="@{/admin/person/add(primary=${person.primary.getId()},sfam=${person.family.id})}">add father</a></div>
-                    <div th:replace="fragments/adminlayout :: familyblock(${person.family})"></div>
+                    <div th:replace="fragments/adminlayout :: familyblock(${person.family}, ${person.primary.getId()})"></div>
                     <div th:if="${person.family.wife!=null}" th:replace="fragments/adminlayout :: personblock(${person.family.wife}, 'parent', ${person.primary.getId()})">mother</div>
                     <div th:if="${person.family.wife==null}" class="parent"><a th:href="@{/admin/person/add(primary=${person.primary.getId()},sfam=${person.family.id})}">add mother</a></div>
                 </div>

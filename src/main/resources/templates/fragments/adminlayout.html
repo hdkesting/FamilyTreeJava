@@ -46,10 +46,13 @@
 </span>
 
 <!-- parameter is of type FamilyVm -->
-<div th:fragment="familyblock(family)" th:if="${family} != null" class="marriage">
+<div th:fragment="familyblock(family, primary)" th:if="${family} != null" class="marriage">
     <p style="font-size: x-large">&times;</p>
     <p th:if="${family.marriageDate} != null"><span title="Married">⚭</span> <span th:text="${family.marriageDate}"></span> <span th:text="${family.marriagePlace}"></span></p>
     <p th:if="${family.divorceDate} != null"><span title="Divorced">⚮</span> <span th:text="${family.divorceDate}"></span> <span th:text="${family.divorcePlace}"></span></p>
+    <p>
+        <a th:href="@{/admin/family/edit/__${family.id}__(primary=${primary})}" title="edit family">✏</a>
+    </p>
 </div>
 
 </body>

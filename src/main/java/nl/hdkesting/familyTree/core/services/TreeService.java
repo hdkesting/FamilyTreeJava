@@ -59,6 +59,16 @@ public class TreeService {
         return convertFamilies(families);
     }
 
+    public Optional<FamilyDto> getFamilyById(long id) {
+        var fam = this.familyRepository.findById(id);
+
+        if (fam.isEmpty()) {
+            return Optional.empty();
+        }
+
+        return Optional.of(convert(fam.get()));
+    }
+
     public boolean clearAll() {
         try {
             this.individualRepository.deleteAll();

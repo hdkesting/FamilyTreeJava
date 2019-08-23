@@ -40,7 +40,7 @@ public class PersonController {
     }
 
     @PostMapping(path = "/edit/{id}")
-    public String postEditPerson(@PathVariable long id, IndividualVm personVm, Model model, HttpServletRequest request) {
+    public String postEditPerson(@PathVariable long id, IndividualVm personVm, HttpServletRequest request) {
         if (!AdminController.isLoggedIn(request)) {
             return AdminController.LOGIN_REDIRECT;
         }
@@ -112,6 +112,11 @@ public class PersonController {
             if (confirm == id) {
                 this.treeService.deleteIndividualById(id);
             }
+        }
+
+        long primary = Long.parseLong("0" + request.getParameter("primary"));
+        if (primary > 0) {
+            return "redirect:/admin/person/show/" + primary;
         }
 
         return "redirect:/admin/search";
