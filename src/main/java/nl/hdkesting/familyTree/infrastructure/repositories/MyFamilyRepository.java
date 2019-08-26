@@ -1,6 +1,7 @@
 package nl.hdkesting.familyTree.infrastructure.repositories;
 
 import nl.hdkesting.familyTree.infrastructure.models.Family;
+import nl.hdkesting.familyTree.infrastructure.models.Individual;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.Entity;
@@ -158,4 +159,17 @@ public class MyFamilyRepository
         });
     }
 
+    public long add(Family family) {
+        var newid = boilerPlate(em-> {
+            long max = em.createQuery("select max(id) from Family", Long.class)
+                    .getSingleResult();
+            max++;
+            family.id = max;
+            em.merge(family);
+
+            return max;
+        });
+
+        return newid;
+    }
 }
