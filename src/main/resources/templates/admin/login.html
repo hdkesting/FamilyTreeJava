@@ -19,6 +19,7 @@
                 <input type="password" id="password" name="password" class="form-control"
                        placeholder="Enter secret password"/>
             </div>
+            <p class="text-danger" th:text="${message}">warning</p>
 
             <button type="submit" name="answer" value="yes" class="btn btn-primary">Login</button>
             <button type="submit" name="answer" value="no" class="btn btn-warning">Cancel</button>
