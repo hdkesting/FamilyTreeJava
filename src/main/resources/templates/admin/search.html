@@ -7,15 +7,15 @@
 <body>
     <div layout:fragment="content">
         <h1>Search for names to edit</h1>
-        <form method="post">
+        <form method="post" id="searchform">
             <div class="form-group">
                 <label for="firstname">First name</label>
-                <input type="text" name="firstname" id="firstname"  class="form-control"
+                <input type="text" name="firstname" id="firstname"  class="form-control search-group"
                        placeholder="Enter (partial) first name(s)" th:value="${firstname}"/>
             </div>
             <div class="form-group">
                 <label for="lastname">Last name</label>
-                <input type="text" name="lastname" id="lastname" class="form-control"
+                <input type="text" name="lastname" id="lastname" class="form-control search-group"
                        placeholder="Enter (partial) last name" th:value="${lastname}" >
             </div>
             <button type="submit" class="btn btn-primary">Search</button>
@@ -31,5 +31,17 @@
             </table>
         </div>
     </div>
+    <script layout:fragment="additionalscript">
+        $("#searchform").validate({
+            rules: {
+                firstname: {
+                    require_from_group: [1, ".search-group"]
+                },
+                lastname: {
+                    require_from_group: [1, ".search-group"]
+                }
+            }
+        });
+    </script>
 </body>
 </html>
