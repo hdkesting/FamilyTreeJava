@@ -39,6 +39,9 @@ public class Individual {
     @Column(name = "deathplace")
     public String deathPlace;
 
+    @Column(name = "deleted")
+    public boolean isDeleted;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
             name = "spouses",

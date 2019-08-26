@@ -1,10 +1,8 @@
 package nl.hdkesting.familyTree.infrastructure.repositories;
 
 import nl.hdkesting.familyTree.infrastructure.models.Family;
-import nl.hdkesting.familyTree.infrastructure.models.Individual;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import java.math.BigInteger;
@@ -20,7 +18,8 @@ public class MyFamilyRepository
             "from Family fam " +
             "left join fetch fam.children fc " +
             "left join fetch fam.spouses fs " +
-            "where fam.id = :id";
+            "where fam.id = :id " +
+            "and fam.isDeleted = 0";
 
     public MyFamilyRepository(EntityManagerFactory factory) {
         super(factory);
@@ -50,7 +49,7 @@ public class MyFamilyRepository
         Long result = boilerPlate(em -> em.createQuery(
                 "select count(*) " +
                         "from Family fam " +
-                        "where fam.id = :id", Long.class)
+                        "where fam.id = :id and fam.isDeleted=0", Long.class)
                 .setParameter("id", id)
                 .getSingleResult());
         return result.equals(1L); // I expect either 0 or 1 for a count by PK
@@ -114,8 +113,7 @@ public class MyFamilyRepository
      */
     public long count() {
         Long result = boilerPlate(em -> em.createQuery(
-                "select count(*) " +
-                        "from Family fam", Long.class)
+                "select count(*) from Family fam where fam.isDeleted=0", Long.class)
                 .getSingleResult());
 
         return result;
@@ -160,6 +158,7 @@ public class MyFamilyRepository
     }
 
     public long add(Family family) {
+        // get max id but do not ignore deleted items!
         var newid = boilerPlate(em-> {
             long max = em.createQuery("select max(id) from Family", Long.class)
                     .getSingleResult();

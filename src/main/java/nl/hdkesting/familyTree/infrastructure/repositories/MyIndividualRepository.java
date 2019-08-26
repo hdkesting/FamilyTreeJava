@@ -3,9 +3,11 @@ package nl.hdkesting.familyTree.infrastructure.repositories;
 import nl.hdkesting.familyTree.core.dto.NameCount;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
 import nl.hdkesting.familyTree.infrastructure.models.NameCountModel;
+import org.assertj.core.util.Strings;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +31,7 @@ public class MyIndividualRepository extends MyBaseRepository {
                         "from Individual ind " +
                         "left join fetch ind.spouseFamilies sf " +
                         "left join fetch ind.childFamilies cf " +
-                        "where ind.id = :id", Individual.class)
+                        "where ind.id = :id and ind.isDeleted=0", Individual.class)
                 .setParameter("id", id)
                 .getResultList());
 
@@ -44,7 +46,7 @@ public class MyIndividualRepository extends MyBaseRepository {
         Long result = boilerPlate(em -> em.createQuery(
                 "select count(*) " +
                         "from Individual ind " +
-                        "where ind.id = :id", Long.class)
+                        "where ind.id = :id and deleted=0", Long.class)
                 .setParameter("id", id)
                 .getSingleResult());
         return result.equals(1L); // I expect either 0 or 1 for a count by PK
@@ -53,13 +55,15 @@ public class MyIndividualRepository extends MyBaseRepository {
     public List<Individual> findAll() {
         List<Individual> result = boilerPlate(em -> em.createQuery(
                 "select ind " +
-                        "from Individual ind", Individual.class)
+                        "from Individual ind where ind.isDeleted=0", Individual.class)
                 .getResultList());
 
         return result;
     }
 
     public int deleteAll() {
+        // delete *all*.
+        // TODO in transaction with family version
         Integer result = boilerPlate(em ->
                 em.createQuery(
                         "delete from Individual")
@@ -78,6 +82,7 @@ public class MyIndividualRepository extends MyBaseRepository {
     }
 
     public long add(Individual individual) {
+        // get max id but do not ignore deleted items!
         var newid = boilerPlate(em-> {
             long max = em.createQuery("select max(id) from Individual", Long.class)
                     .getSingleResult();
@@ -98,7 +103,7 @@ public class MyIndividualRepository extends MyBaseRepository {
     public long count() {
         Long result = boilerPlate(em -> em.createQuery(
                 "select count(*) " +
-                        "from Individual ind", Long.class) // NB spelling/capitalisation of table name must match class
+                        "from Individual ind where ind.isDeleted=0", Long.class) // NB spelling/capitalisation of table name must match class
                 .getSingleResult());
 
         return result;
@@ -111,7 +116,8 @@ public class MyIndividualRepository extends MyBaseRepository {
     public List<NameCount> getLastNames() {
         List<NameCountModel> names = boilerPlate(em -> em.createQuery(
                 "SELECT new NameCountModel(lastName, count(*)) " +
-                    "FROM Individual " +
+                    "FROM Individual ind " +
+                    "WHERE ind.isDeleted=0 " +
                     "GROUP BY lastName ORDER BY lastName", NameCountModel.class)
                 .getResultList()
             );
@@ -134,6 +140,7 @@ public class MyIndividualRepository extends MyBaseRepository {
                 "SELECT ind " +
                     "FROM Individual ind " +
                     "WHERE lastName = :lastname " +
+                        "AND ind.isDeleted=0 " +
                     "ORDER BY birthDate, deathDate, lastName, firstNames", Individual.class)
                 .setParameter("lastname", lastName)
                 .getResultList()
@@ -149,12 +156,37 @@ public class MyIndividualRepository extends MyBaseRepository {
      * @return
      */
     public List<Individual> findByFirstNamesAndLastName(String firstName, String lastName) {
-        List<Individual> result = boilerPlate(em -> em.createQuery(
-                "SELECT indi FROM Individual indi " +
-                    "WHERE firstNames LIKE :first AND lastName LIKE :last", Individual.class)
-                .setParameter("first", "%" + firstName.replace(' ', '%') + "%")
-                .setParameter("last", '%' + lastName + '%')
-                .getResultList()
+        String lastName2;
+        if (Strings.isNullOrEmpty(lastName)) {
+            lastName2 = "%";
+        } else {
+            lastName2 = "%" + lastName + "%";
+        }
+
+        List<Individual> result = boilerPlate(em -> {
+            String qryText = "SELECT indi FROM Individual indi WHERE indi.isDeleted=0 AND indi.lastName LIKE :last";
+            if (!Strings.isNullOrEmpty(firstName)) {
+                var names = firstName.split("\\s+");
+                StringBuilder sb = new StringBuilder(qryText);
+                for (int i=0; i<names.length; i++) {
+                    sb.append(" AND indi.firstNames LIKE :first" + i);
+                }
+                qryText = sb.toString();
+
+                Query query = em.createQuery(qryText, Individual.class)
+                        .setParameter("last", lastName2);
+
+                for (int i=0; i<names.length; i++) {
+                    query.setParameter("first" + i, "%" + names[i] + "%");
+                }
+
+                return query.getResultList();
+            }
+
+            return em.createQuery(qryText, Individual.class)
+                             .setParameter("last", lastName2)
+                            .getResultList();
+            }
         );
 
         return result;
@@ -166,7 +198,7 @@ public class MyIndividualRepository extends MyBaseRepository {
      * @return true when succeeded, otherwise false.
      */
     public boolean deleteById(long id) {
-        var dels = boilerPlate( em -> {
+        /*var dels = boilerPlate( em -> {
             em.createNativeQuery("delete from children where childid = :id")
                     .setParameter("id", id)
                     .executeUpdate();
@@ -178,7 +210,11 @@ public class MyIndividualRepository extends MyBaseRepository {
                     .executeUpdate();
 
             return cnt;
-        });
+        });*/
+
+        var dels = boilerPlate(em -> em.createQuery("update Individual indi set deleted = 1 where indi.id = :id")
+                  .setParameter("id", id)
+                    .executeUpdate());
 
         return dels > 0;
     }
