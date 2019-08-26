@@ -30,6 +30,9 @@ public class Family {
     @Column(name = "divorceplace")
     public String divorcePlace;
 
+    @Column(name = "deleted")
+    public boolean isDeleted;
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "spouses",
         joinColumns = @JoinColumn(name = "familyid", referencedColumnName = "id"),
