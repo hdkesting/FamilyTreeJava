@@ -1,22 +1,23 @@
 package nl.hdkesting.familyTree.ui.controllers;
 
+import nl.hdkesting.familyTree.core.services.ApplicationProperties;
 import nl.hdkesting.familyTree.core.services.TreeService;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 @Controller
 @RequestMapping(path="/init")
 public class InitializationController {
     private final TreeService treeService;
+    private final ApplicationProperties appProperties;
 
-    public InitializationController(TreeService treeService) {
+    public InitializationController(
+            TreeService treeService,
+            ApplicationProperties appProperties) {
         this.treeService = treeService;
+        this.appProperties = appProperties;
     }
 
     @GetMapping(path="/clear")
@@ -30,16 +31,7 @@ public class InitializationController {
 
     @GetMapping(path = "/load")
     public @ResponseBody String loadAll() {
-        ClassLoader loader = Thread.currentThread().getContextClassLoader();
-        Properties props = new Properties();
-        try (InputStream resourceStream = loader.getResourceAsStream("application.properties")) {
-            props.load(resourceStream);
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            return "Cannot read props";
-        }
-
-        String path = "source/" + props.getProperty("gedcom.source");
+        String path = "source/" + this.appProperties.getGedcomSource();
         if (this.treeService.load(path)) {
             return "File " + path + " is loaded.";
         }

@@ -1,6 +1,7 @@
 package nl.hdkesting.familyTree.ui.controllers.admin;
 
 import nl.hdkesting.familyTree.core.dto.IndividualDto;
+import nl.hdkesting.familyTree.core.services.ApplicationProperties;
 import nl.hdkesting.familyTree.core.services.TreeService;
 import nl.hdkesting.familyTree.ui.viewModels.IndividualVm;
 import org.apache.tomcat.util.codec.binary.Base64;
@@ -13,12 +14,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 @Controller
 @RequestMapping(path = "/admin")
@@ -26,9 +24,13 @@ public class AdminController {
     private static final String LOGIN_SESSION = "LoginSession";
     public static final String LOGIN_REDIRECT = "redirect:/admin/login";
     private final TreeService treeService;
+    private final ApplicationProperties appProperties;
 
-    public AdminController(TreeService treeService) {
+    public AdminController(
+            TreeService treeService,
+            ApplicationProperties appProperties) {
         this.treeService = treeService;
+        this.appProperties = appProperties;
     }
 
     @GetMapping(path = "")
@@ -97,7 +99,7 @@ public class AdminController {
     }
 
     @PostMapping(path = "/login")
-    public String postLogin(HttpServletRequest request) {
+    public String postLogin(Model model, HttpServletRequest request) {
         String[] vals = request.getParameterValues("answer");
         if (vals != null && vals.length == 1) {
             if (vals[0].equalsIgnoreCase("yes")) {
@@ -111,19 +113,8 @@ public class AdminController {
                     String u64 = Base64.encodeBase64String(unmbytes);
                     String p64 = Base64.encodeBase64String(pwdbytes);
 
-                    // properties boilerplate
-                    ClassLoader loader = Thread.currentThread().getContextClassLoader();
-                    Properties props = new Properties();
-                    try (InputStream resourceStream = loader.getResourceAsStream("application.properties")) {
-                        props.load(resourceStream);
-                    } catch (IOException ex) {
-                        ex.printStackTrace();
-                        return "redirect:/";
-                    }
-                    // end boilerplate
-
-                    String uprop = props.getProperty("admin.user");
-                    String pprop = props.getProperty("admin.password");
+                    String uprop = this.appProperties.getEncodedAdminUsername();
+                    String pprop = this.appProperties.getEncodedAdminPassword();
 
                     if (u64.equals(uprop) && p64.equals(pprop)) {
                         setLoggedIn(request, true);
@@ -135,8 +126,10 @@ public class AdminController {
         }
 
         setLoggedIn(request, false);
-        // get out of admin
-        return "redirect:/";
+        // re-ask username/password
+        model.addAttribute("message", "Invalid username and/or password.");
+
+        return "admin/login";
     }
 
     @GetMapping(path = "/logout")
