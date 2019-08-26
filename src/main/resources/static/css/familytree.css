@@ -4,6 +4,9 @@ body {
 
 header {
     background: lightgrey;
+}
+
+header .jumbotron {
     font-family: Gabriola;
     text-align: center;
     font-size: 48pt;
