@@ -32,12 +32,7 @@ public class FamilyVm {
         this.divorcePlace = dto.getDivorcePlace();
 
         for(IndividualDto spouse : dto.getSpouses()) {
-            // assumption: there is at most one male and one female
-            if (spouse.isMale()) {
-                this.husband = new IndividualVm(spouse);
-            } else if (spouse.isFemale()) {
-                this.wife = new IndividualVm(spouse);
-            }
+            addSpouse(new IndividualVm(spouse));
         }
 
         for (IndividualDto child : dto.getChildren()) {
@@ -57,17 +52,19 @@ public class FamilyVm {
         return husband;
     }
 
+/*
     public void setHusband(IndividualVm husband) {
         this.husband = husband;
     }
+*/
 
     public IndividualVm getWife() {
         return wife;
     }
 
-    public void setWife(IndividualVm wife) {
-        this.wife = wife;
-    }
+//    public void setWife(IndividualVm wife) {
+//        this.wife = wife;
+//    }
 
     public List<IndividualVm> getChildren() {
         return children;
@@ -103,5 +100,27 @@ public class FamilyVm {
 
     public void setDivorcePlace(String divorcePlace) {
         this.divorcePlace = divorcePlace;
+    }
+
+    public void addSpouse(IndividualVm spouse) {
+        // assume spouse != null
+        if (spouse.isMale()) {
+            if (this.husband != null && this.wife == null) {
+                this.wife = this.husband;
+            }
+            this.husband = spouse;
+        } else if (spouse.isFemale()) {
+            if (this.husband == null && this.wife != null) {
+                this.husband = this.wife;
+            }
+            this.wife = spouse;
+        } else {
+            // sex unknown, add in any open spot
+            if (this.husband == null) {
+                this.husband = spouse;
+            } else if (this.wife == null) {
+                this.wife = spouse;
+            }
+        }
     }
 }
