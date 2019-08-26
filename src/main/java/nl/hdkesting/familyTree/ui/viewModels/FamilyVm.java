@@ -32,6 +32,7 @@ public class FamilyVm {
         this.divorcePlace = dto.getDivorcePlace();
 
         for(IndividualDto spouse : dto.getSpouses()) {
+            // assumption: there is at most one male and one female
             if (spouse.isMale()) {
                 this.husband = new IndividualVm(spouse);
             } else if (spouse.isFemale()) {

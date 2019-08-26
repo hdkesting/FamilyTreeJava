@@ -71,4 +71,52 @@ public class FamilyController {
         return "redirect:/admin";
     }
 
+    @GetMapping(path = "/add")
+    public String getAddFamily(Model model, HttpServletRequest request) {
+        if (!AdminController.isLoggedIn(request)) {
+            return AdminController.LOGIN_REDIRECT;
+        }
+
+        long primary = Long.parseLong("0" + request.getParameter("primary"));
+        String famtype = request.getParameter("famtype"); // C=primary is child, S=primary is spouse
+
+        if (primary == 0 || (!famtype.equalsIgnoreCase("C") && !famtype.equalsIgnoreCase("P"))) {
+            return "redirect:/admin/search";
+        }
+
+        model.addAttribute("family", new FamilyVm()); // to prevent NPE
+
+        return "admin/editFamily"; // re-use that template
+    }
+
+    @PostMapping(path = "/add")
+    public String postAddFamily(FamilyVm familyVm, HttpServletRequest request) {
+        if (!AdminController.isLoggedIn(request)) {
+            return AdminController.LOGIN_REDIRECT;
+        }
+
+        long primary = Long.parseLong("0" + request.getParameter("primary"));
+        String famtype = request.getParameter("famtype"); // C=primary is child, S=primary is spouse
+
+        if (primary == 0 || (!famtype.equalsIgnoreCase("C") && !famtype.equalsIgnoreCase("P"))) {
+            return "redirect:/admin/search";
+        }
+
+        var fam = new FamilyDto();
+        fam.setMarriageDate(familyVm.getMarriageDate());
+        fam.setMarriagePlace(familyVm.getMarriagePlace());
+        fam.setDivorceDate(familyVm.getDivorceDate());
+        fam.setDivorcePlace(familyVm.getDivorcePlace());
+
+        var famid = this.treeService.add(fam);
+
+        if (famtype.equalsIgnoreCase("C")) {
+            this.treeService.addChild(famid, primary);
+        }
+        else if (famtype.equalsIgnoreCase("S")) {
+            this.treeService.addSpouse(famid, primary);
+        }
+
+        return "redirect:/admin/person/show/" + primary;
+    }
 }

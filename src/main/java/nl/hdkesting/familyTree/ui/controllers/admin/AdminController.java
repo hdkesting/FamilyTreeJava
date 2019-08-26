@@ -106,6 +106,7 @@ public class AdminController {
         return "redirect:/";
     }
 
+    // simple "is logged in" check, assuming that a *real* security system will handle this at a more fundamental level
     public static boolean isLoggedIn(HttpServletRequest request) {
         HttpSession session = request.getSession(false); // don't create a new session
         if (session == null) {

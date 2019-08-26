@@ -126,6 +126,18 @@ public class TreeService {
         familyRepository.save(dbFamily);
     }
 
+    public long add(FamilyDto family) {
+        if (family == null) throw new IllegalArgumentException("'family' cannot be null");
+        if (family.getId() != 0) throw new IllegalArgumentException("new family's id must be ==0");
+
+        Family dbFamily = getNewFamily(0);
+        map(family, dbFamily);
+
+        var id = this.familyRepository.add(dbFamily);
+        family.setId(id);
+        return id;
+    }
+
     public void updateRelations(long familyId, ArrayList<Long> spouseIds, ArrayList<Long> childIds) {
         var optFamily =  familyRepository.findById(familyId);
 
