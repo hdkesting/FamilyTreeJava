@@ -3,8 +3,8 @@ package nl.hdkesting.familyTree.core.services;
 import nl.hdkesting.familyTree.core.dto.*;
 import nl.hdkesting.familyTree.infrastructure.models.Family;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
-import nl.hdkesting.familyTree.infrastructure.repositories.MyFamilyRepository;
-import nl.hdkesting.familyTree.infrastructure.repositories.MyIndividualRepository;
+import nl.hdkesting.familyTree.core.interfaces.MyFamilyRepository;
+import nl.hdkesting.familyTree.core.interfaces.MyIndividualRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

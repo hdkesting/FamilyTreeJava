@@ -13,9 +13,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class MyIndividualRepository extends MyBaseRepository {
+public class MyIndividualRepositoryImpl
+        extends MyBaseRepository
+        implements nl.hdkesting.familyTree.core.interfaces.MyIndividualRepository {
 
-    public MyIndividualRepository(EntityManagerFactory factory) {
+    public MyIndividualRepositoryImpl(EntityManagerFactory factory) {
         super(factory);
     }
 
