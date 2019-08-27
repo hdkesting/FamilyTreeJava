@@ -28,7 +28,7 @@ public class TreeService {
     }
 
     public Optional<IndividualDto> getIndividualById(long id) {
-        Optional<Individual> individual = this.individualRepository.findById(id);
+        Optional<Individual> individual = this.individualRepository.findById(id, false);
 
         if (individual.isPresent()) {
             IndividualDto dto = getNewIndividualDto(id);
@@ -40,13 +40,28 @@ public class TreeService {
     }
 
     public Iterable<IndividualDto> getAllIndividuals() {
-        ArrayList<IndividualDto> target = new ArrayList<>();
+        List<IndividualDto> target = new ArrayList<>();
         Iterable<Individual> sourceList = this.individualRepository.findAll();
         for(Individual source: sourceList) {
             target.add(convert(source));
         }
 
         return target;
+    }
+
+    public List<IndividualDto> getAllDeletedPersons() {
+        List<IndividualDto> target = new ArrayList<>();
+
+        List<Individual> sourceList = this.individualRepository.getAllDeleted();
+        for(Individual source: sourceList) {
+            target.add(convert(source));
+        }
+
+        return target;
+    }
+
+    public int restorePersons(List<Long> ids) {
+        return this.individualRepository.restorePersons(ids);
     }
 
     public List<FamilyDto> getSpouseFamiliesByIndividualId(long id) {
@@ -95,10 +110,11 @@ public class TreeService {
 
         // person must have an id, but may not yet exist in the database (when importing)
         long id = person.getId();
-        Individual dbPerson = individualRepository.findById(id)
+        Individual dbPerson = individualRepository.findById(id, true)
                 .orElseGet(() -> getNewIndividual(id));
 
         map(person, dbPerson);
+        dbPerson.isDeleted = false; // assume that an updated person cannot remain deleted.
         individualRepository.save(dbPerson);
     }
 
@@ -176,7 +192,7 @@ public class TreeService {
                 }
 
                 if (!found) {
-                    var optSpouse = this.individualRepository.findById(id);
+                    var optSpouse = this.individualRepository.findById(id, true);
                     optSpouse.ifPresent(spouses::add);
                 }
             }
@@ -209,7 +225,7 @@ public class TreeService {
                 }
 
                 if (!found) {
-                    var optChild = this.individualRepository.findById(id);
+                    var optChild = this.individualRepository.findById(id, true);
                     optChild.ifPresent(children::add);
                 }
             }
@@ -226,7 +242,7 @@ public class TreeService {
             return;
         }
         Family family = optFamily.get();
-        var optChild = this.individualRepository.findById(childId);
+        var optChild = this.individualRepository.findById(childId, true);
         if (optChild.isPresent()) {
             family.children.add(optChild.get());
             familyRepository.save(family);
@@ -241,7 +257,7 @@ public class TreeService {
             return;
         }
         Family family = optFamily.get();
-        var optSpouse = this.individualRepository.findById(spouseId);
+        var optSpouse = this.individualRepository.findById(spouseId, true);
         if (optSpouse.isPresent()) {
             family.spouses.add(optSpouse.get());
             familyRepository.save(family);
@@ -304,7 +320,7 @@ public class TreeService {
     }
 
     private Individual convert(IndividualDto source) {
-        Individual target = individualRepository.findById(source.getId())
+        Individual target = individualRepository.findById(source.getId(), true)
                 .orElseGet(() -> getNewIndividual(source.getId()));
         map(source, target);
         return target;
