@@ -1,5 +1,7 @@
 package nl.hdkesting.familyTree.core.dto;
 
+import org.assertj.core.util.Strings;
+
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +31,7 @@ public class IndividualDto {
     }
 
     public void setFirstNames(String firstNames) {
-        this.firstNames = firstNames;
+        this.firstNames = Strings.isNullOrEmpty(firstNames) ? null : firstNames;
     }
 
     public String getLastName() {
@@ -37,7 +39,7 @@ public class IndividualDto {
     }
 
     public void setLastName(String lastName) {
-        this.lastName = lastName;
+        this.lastName = Strings.isNullOrEmpty(lastName) ? null : lastName;
     }
 
     public Sex getSex() {
@@ -60,8 +62,9 @@ public class IndividualDto {
         return birthPlace;
     }
 
-    public void setBirthPlace(String birthPlace) {
-        this.birthPlace = birthPlace;
+    public void setBirthPlace(String birthPlace)
+    {
+        this.birthPlace = Strings.isNullOrEmpty(birthPlace) ? null : birthPlace;
     }
 
     public LocalDate getDeathDate() {
@@ -77,7 +80,7 @@ public class IndividualDto {
     }
 
     public void setDeathPlace(String deathPlace) {
-        this.deathPlace = deathPlace;
+        this.deathPlace = Strings.isNullOrEmpty(deathPlace) ? null : deathPlace;
     }
 
     public Set<FamilyDto> getSpouseFamilies() {
