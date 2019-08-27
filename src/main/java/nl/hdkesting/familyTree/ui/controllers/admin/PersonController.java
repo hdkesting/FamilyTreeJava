@@ -6,17 +6,21 @@ import nl.hdkesting.familyTree.core.services.TreeService;
 import nl.hdkesting.familyTree.ui.viewModels.FamilyVm;
 import nl.hdkesting.familyTree.ui.viewModels.IndividualVm;
 import nl.hdkesting.familyTree.ui.viewModels.PersonDetailsVm;
+import org.assertj.core.util.Strings;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
 @RequestMapping(path = "/admin/person")
 public class PersonController {
     private final TreeService treeService;
+    private static final String MESSAGE_KEY = "message";
 
     public PersonController(TreeService treeService) {
         this.treeService = treeService;
@@ -231,5 +235,86 @@ public class PersonController {
         }
 
         return "redirect:/admin/person/show/" + primary;
+    }
+
+    @GetMapping(path = "/restore")
+    public String getRestoreDeleted(Model model, HttpServletRequest request) {
+        if (!AdminController.isLoggedIn(request)) {
+            return AdminController.LOGIN_REDIRECT;
+        }
+        // get all soft-deleted people
+        // add list to model
+
+        List<IndividualDto> dtolist = this.treeService.getAllDeletedPersons();
+        List<IndividualVm> vmlist = new ArrayList<>(dtolist.size());
+        for(var dto : dtolist) {
+            vmlist.add(new IndividualVm(dto));
+        }
+
+        model.addAttribute("list", vmlist);
+        var msg = getMessage(request);
+        if (msg.isPresent()) {
+            model.addAttribute("message", msg.get());
+        }
+
+        return "admin/restorePersons";
+    }
+
+    @PostMapping(path = "/restore")
+    public String postRestoreDeleted(HttpServletRequest request) {
+        if (!AdminController.isLoggedIn(request)) {
+            return AdminController.LOGIN_REDIRECT;
+        }
+        // get button: "restore checked" or "hard-delete checked"
+
+        List<Long> ids = new ArrayList<>();
+        String[] idStrings = request.getParameterValues("person");
+        if (idStrings != null) {
+            // the fantastic Java needs this null-check. Apparently can't be bothered to return an empty list.
+            for (String id : idStrings) {
+                ids.add(Long.parseLong(id));
+            }
+        }
+
+        if (!ids.isEmpty()) {
+            int cnt = this.treeService.restorePersons(ids);
+
+            String message;
+            switch (cnt) {
+                case 0:
+                    message = "No people are restored.";
+                    break;
+                case 1:
+                    message = "One person is restored.";
+                    break;
+                default:
+                    message = "" + cnt + " persons are restored.";
+                    break;
+            }
+            setMessage(request,  message);
+        } else {
+            setMessage(request, "No people were selected.");
+        }
+
+        return "redirect:/admin/person/restore";
+    }
+
+    /**
+     * Get the possible message from the session, immediately removing it.
+     * @param request
+     * @return
+     */
+    private Optional<String> getMessage(HttpServletRequest request) {
+        String message = (String)request.getSession().getAttribute(MESSAGE_KEY);
+        request.getSession().removeAttribute(MESSAGE_KEY);
+        return Optional.ofNullable(message);
+    }
+
+    private void setMessage(HttpServletRequest request, String message) {
+        if (Strings.isNullOrEmpty(message)) {
+            request.getSession().removeAttribute(MESSAGE_KEY);
+        } else {
+            request.getSession().setAttribute(MESSAGE_KEY, message);
+        }
     }
 }

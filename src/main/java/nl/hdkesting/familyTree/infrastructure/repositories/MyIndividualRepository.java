@@ -24,14 +24,22 @@ public class MyIndividualRepository extends MyBaseRepository {
      * @param id
      * @return
      */
-    public Optional<Individual> findById(long id) {
+    public Optional<Individual> findById(long id, boolean includeDeleted) {
         System.out.println("-- getting INDI " + id);
+        String basequery = "select ind " +
+                "from Individual ind " +
+                "left join fetch ind.spouseFamilies sf " +
+                "left join fetch ind.childFamilies cf " +
+                "where ind.id = :id";
+        String query;
+        if (includeDeleted) {
+            query = basequery;
+        } else {
+            query = basequery + " and ind.isDeleted=0";
+        }
+
         List<Individual> result = boilerPlate(em -> em.createQuery(
-                "select ind " +
-                        "from Individual ind " +
-                        "left join fetch ind.spouseFamilies sf " +
-                        "left join fetch ind.childFamilies cf " +
-                        "where ind.id = :id and ind.isDeleted=0", Individual.class)
+                query, Individual.class)
                 .setParameter("id", id)
                 .getResultList());
 
@@ -55,7 +63,18 @@ public class MyIndividualRepository extends MyBaseRepository {
     public List<Individual> findAll() {
         List<Individual> result = boilerPlate(em -> em.createQuery(
                 "select ind " +
-                        "from Individual ind where ind.isDeleted=0", Individual.class)
+                        "from Individual ind " +
+                        "where ind.isDeleted=0", Individual.class)
+                .getResultList());
+
+        return result;
+    }
+
+    public List<Individual> getAllDeleted() {
+        List<Individual> result = boilerPlate(em -> em.createQuery(
+                "select ind " +
+                        "from Individual ind " +
+                        "where ind.isDeleted=1", Individual.class)
                 .getResultList());
 
         return result;
@@ -71,6 +90,16 @@ public class MyIndividualRepository extends MyBaseRepository {
         );
 
         return result;
+    }
+
+    public int restorePersons(List<Long> ids) {
+        Integer count = boilerPlate(em ->
+                // need to cast as "setParameterList" isn't available otherwise. It works!
+                ((org.hibernate.query.Query)em.createQuery("update Individual indi set deleted=0 where indi.id in :ids"))
+                    .setParameterList("ids", ids)
+                    .executeUpdate());
+
+        return count.intValue();
     }
 
     public void save(Individual individual) {

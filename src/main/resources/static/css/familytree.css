@@ -78,3 +78,11 @@ span.lastname {
 label.error {
     color: red;
 }
+
+ul.menu li {
+    list-style-type: none;
+}
+
+ul.menu li:before {
+    content: "👉 ";
+}

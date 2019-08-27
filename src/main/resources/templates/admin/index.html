@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout/adminlayout}">
+<head>
+    <title>Admin - Family Tree search</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <h2>Welcome to Family Tree Admin</h2>
+    <ul class="menu">
+        <li><a href="/admin/search">Search for people to edit</a></li>
+        <li><a href="/admin/person/restore">Restore soft-deleted people</a></li>
+        <li><a href="/admin/init">Initialize the database</a></li>
+    </ul>
+</div>
+</body>
+</html>
