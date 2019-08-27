@@ -38,8 +38,7 @@
         </tr>
     </table>
 
-    <q th:if="${!person.marriages.isEmpty()}" th:remove="tag">
-        <h2>Marriage<span th:if="${person.marriages.size()} > 1" th:remove="tag">s</span></h2>
+    <h2>Marriage(s)</span></h2>
         <div th:each="family : ${person.marriages}">
             <p th:if="${family.wife != null && family.wife.id != person.primary.id}">
                 <strong>Married to</strong> <span th:replace="fragments/adminlayout :: personline(${family.wife}, ${person.primary.getId()})">wife</span>
@@ -50,6 +49,13 @@
             <p th:if="${(family.wife == null || family.wife.id == person.primary.id) && (family.husband == null || family.husband.id == person.primary.id)}">
                 <!-- only show "add spouse" when no spouse is known -->
                 <a th:href="@{/admin/person/add(primary=${person.primary.getId()},sfam=${family.id})}">add spouse</a>
+            </p>
+            <p>
+            <q th:if="${family.marriageDate != null || family.marriagePlace != null}" th:remove="tag"><span title="Married"> ⚭
+                <span th:text="${family.marriageDate}" th:remove="tag">date</span> <span th:text="${family.marriagePlace}" th:remove="tag">place</span></span></q>
+            <q th:if="${family.divorceDate != null || family.divorcePlace != null}" th:remove="tag"><span title="Divorced"> ⚮
+                <span th:text="${family.divorceDate}" th:remove="tag">date</span> <span th:text="${family.divorcePlace}" th:remove="tag">place</span></span></q>
+                <span><a th:href="@{/admin/family/edit/__${family.id}__(primary=${person.primary.id})}" title="edit family">✏</a></span>
             </p>
             <q th:if="${!family.children.isEmpty()}" th:remove="tag">
                 <p><strong>Children</strong></p>
@@ -64,8 +70,12 @@
                 <!-- always show "add child" -->
                 <a th:href="@{/admin/person/add(primary=${person.primary.getId()},cfam=${family.id})}">add child</a>
             </p>
+            <hr/>
         </div>
-    </q>
+        <div>
+            <!-- always show "add marriage" -->
+            <a th:href="@{/admin/family/add(primary=${person.primary.id},famtype=S)}">add marriage</a>
+        </div>
 </div>
 </body>
 </html>

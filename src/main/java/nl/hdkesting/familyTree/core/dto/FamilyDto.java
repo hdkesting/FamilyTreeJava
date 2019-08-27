@@ -1,6 +1,6 @@
 package nl.hdkesting.familyTree.core.dto;
 
-import org.springframework.context.annotation.Bean;
+import org.assertj.core.util.Strings;
 
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -36,7 +36,7 @@ public class FamilyDto {
     }
 
     public void setMarriagePlace(String marriagePlace) {
-        this.marriagePlace = marriagePlace;
+        this.marriagePlace =  Strings.isNullOrEmpty(marriagePlace) ? null : marriagePlace;
     }
 
     public LocalDate getDivorceDate() {
@@ -52,7 +52,7 @@ public class FamilyDto {
     }
 
     public void setDivorcePlace(String divorcePlace) {
-        this.divorcePlace = divorcePlace;
+        this.divorcePlace =  Strings.isNullOrEmpty(divorcePlace) ? null : divorcePlace;
     }
 
     public Set<IndividualDto> getSpouses() {
