@@ -36,8 +36,7 @@ public class AdminController {
     @GetMapping(path = "")
     public String getIndex(HttpServletRequest request) {
         if (isLoggedIn(request)) {
-            // logged in: redirect to search
-            return "redirect:/admin/search";
+            return "admin/index";
         } else {
             // not logged in: ask
             return LOGIN_REDIRECT;
