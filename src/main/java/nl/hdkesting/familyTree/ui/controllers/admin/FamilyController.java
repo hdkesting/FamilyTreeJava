@@ -1,11 +1,8 @@
 package nl.hdkesting.familyTree.ui.controllers.admin;
 
 import nl.hdkesting.familyTree.core.dto.FamilyDto;
-import nl.hdkesting.familyTree.core.dto.IndividualDto;
-import nl.hdkesting.familyTree.core.dto.Sex;
 import nl.hdkesting.familyTree.core.services.TreeService;
 import nl.hdkesting.familyTree.ui.viewModels.FamilyVm;
-import nl.hdkesting.familyTree.ui.viewModels.IndividualVm;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +17,8 @@ import java.util.Optional;
 @RequestMapping(path = "/admin/family")
 public class FamilyController {
     private final TreeService treeService;
+    private static final String FAMTYPE_CHILD = "C";
+    private static final String FAMTYPE_SPOUSE = "S";
 
     public FamilyController(TreeService treeService) {
         this.treeService = treeService;
@@ -80,7 +79,7 @@ public class FamilyController {
         long primary = Long.parseLong("0" + request.getParameter("primary"));
         String famtype = request.getParameter("famtype"); // C=primary is child, S=primary is spouse
 
-        if (primary == 0 || (!famtype.equalsIgnoreCase("C") && !famtype.equalsIgnoreCase("P"))) {
+        if (primary == 0 || (!famtype.equalsIgnoreCase(FAMTYPE_CHILD) && !famtype.equalsIgnoreCase(FAMTYPE_SPOUSE))) {
             return "redirect:/admin/search";
         }
 
@@ -98,7 +97,7 @@ public class FamilyController {
         long primary = Long.parseLong("0" + request.getParameter("primary"));
         String famtype = request.getParameter("famtype"); // C=primary is child, S=primary is spouse
 
-        if (primary == 0 || (!famtype.equalsIgnoreCase("C") && !famtype.equalsIgnoreCase("P"))) {
+        if (primary == 0 || (!famtype.equalsIgnoreCase(FAMTYPE_CHILD) && !famtype.equalsIgnoreCase(FAMTYPE_SPOUSE))) {
             return "redirect:/admin/search";
         }
 
@@ -110,10 +109,10 @@ public class FamilyController {
 
         var famid = this.treeService.add(fam);
 
-        if (famtype.equalsIgnoreCase("C")) {
+        if (famtype.equalsIgnoreCase(FAMTYPE_CHILD)) {
             this.treeService.addChild(famid, primary);
         }
-        else if (famtype.equalsIgnoreCase("S")) {
+        else if (famtype.equalsIgnoreCase(FAMTYPE_SPOUSE)) {
             this.treeService.addSpouse(famid, primary);
         }
 
