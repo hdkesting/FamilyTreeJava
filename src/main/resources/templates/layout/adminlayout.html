@@ -14,7 +14,11 @@
         <div class="jumbotron">
             <h1><a href="/admin">Family Tree - Admin</a></h1>
         </div>
-        <div class="float-right"><a href="/admin/logout" onclick="return confirm('really logout?')">logout</a></div>
+        <div class="float-right">
+            <form th:action="@{/logout}" method="post">
+                <input type="submit" value="Sign Out"/>
+            </form>
+        </div>
     </header>
 
     <div class="container">

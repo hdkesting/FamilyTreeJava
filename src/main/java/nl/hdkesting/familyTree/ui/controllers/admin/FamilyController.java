@@ -25,10 +25,7 @@ public class FamilyController {
     }
 
     @GetMapping(path = "/edit/{id}")
-    public String getEditFamily(@PathVariable long id, Model model, HttpServletRequest request) {
-        if (!AdminController.isLoggedIn(request)) {
-            return AdminController.LOGIN_REDIRECT;
-        }
+    public String getEditFamily(@PathVariable long id, Model model) {
 
         Optional<FamilyDto> opt = this.treeService.getFamilyById(id);
         if (opt.isEmpty()) {
@@ -43,9 +40,6 @@ public class FamilyController {
 
     @PostMapping(path = "/edit/{id}")
     public String postEditFamily(@PathVariable long id, FamilyVm familyVm, HttpServletRequest request) {
-        if (!AdminController.isLoggedIn(request)) {
-            return AdminController.LOGIN_REDIRECT;
-        }
 
         Optional<FamilyDto> opt = this.treeService.getFamilyById(id);
         if (opt.isEmpty()) {
@@ -72,10 +66,6 @@ public class FamilyController {
 
     @GetMapping(path = "/add")
     public String getAddFamily(Model model, HttpServletRequest request) {
-        if (!AdminController.isLoggedIn(request)) {
-            return AdminController.LOGIN_REDIRECT;
-        }
-
         long primary = Long.parseLong("0" + request.getParameter("primary"));
         String famtype = request.getParameter("famtype"); // C=primary is child, S=primary is spouse
 
@@ -90,9 +80,6 @@ public class FamilyController {
 
     @PostMapping(path = "/add")
     public String postAddFamily(FamilyVm familyVm, HttpServletRequest request) {
-        if (!AdminController.isLoggedIn(request)) {
-            return AdminController.LOGIN_REDIRECT;
-        }
 
         long primary = Long.parseLong("0" + request.getParameter("primary"));
         String famtype = request.getParameter("famtype"); // C=primary is child, S=primary is spouse

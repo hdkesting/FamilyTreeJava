@@ -19,8 +19,6 @@ public class InitializationController {
     private final ApplicationProperties appProperties;
     private static final String MESSAGE_KEY = "message";
 
-    // NB no "login check" added
-
     public InitializationController(
             TreeService treeService,
             ApplicationProperties appProperties) {

@@ -7,7 +7,13 @@
 <body>
     <div layout:fragment="content">
         <h1>Login</h1>
-        <form method="post">
+        <div th:if="${param.error}" class="alert alert-danger" >
+            Invalid username and password.
+        </div>
+        <div th:if="${param.logout}" class="alert alert-success">
+            You have been logged out.
+        </div>
+        <form th:action="@{/login}" method="post">
             <p class="text-primary">Please log in</p>
             <div class="form-group">
                 <label for="username">Username</label>
@@ -19,10 +25,8 @@
                 <input type="password" id="password" name="password" class="form-control"
                        placeholder="Enter secret password"/>
             </div>
-            <p class="text-danger" th:text="${message}">warning</p>
 
-            <button type="submit" name="answer" value="yes" class="btn btn-primary">Login</button>
-            <button type="submit" name="answer" value="no" class="btn btn-warning">Cancel</button>
+            <button type="submit" value="Sign in" class="btn btn-primary">Sign in</button>
         </form>
     </div>
 </body>
