@@ -1,5 +1,6 @@
 package nl.hdkesting.familyTree.infrastructure.repositories;
 
+import nl.hdkesting.familyTree.core.interfaces.MyFamilyRepository;
 import nl.hdkesting.familyTree.infrastructure.models.Family;
 import org.springframework.stereotype.Repository;
 
@@ -11,8 +12,9 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public class MyFamilyRepository
-    extends MyBaseRepository {
+public class MyFamilyRepositoryImpl
+    extends MyBaseRepository
+    implements MyFamilyRepository {
 
     private static final String FAMILY_QUERY = "select fam " +
             "from Family fam " +
@@ -21,7 +23,7 @@ public class MyFamilyRepository
             "where fam.id = :id " +
             "and fam.isDeleted = 0";
 
-    public MyFamilyRepository(EntityManagerFactory factory) {
+    public MyFamilyRepositoryImpl(EntityManagerFactory factory) {
         super(factory);
     }
 

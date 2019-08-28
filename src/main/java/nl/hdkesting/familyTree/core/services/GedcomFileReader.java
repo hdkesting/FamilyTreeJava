@@ -27,6 +27,7 @@ public class GedcomFileReader {
      * @param path
      * @return true if it was successful.
      */
+    @Deprecated(since = "Supply a reader instead of a path")
     public boolean readFile(String path) {
         ClassLoader classLoader = getClass().getClassLoader();
         URL resource = classLoader.getResource(path);
@@ -34,16 +35,38 @@ public class GedcomFileReader {
             return false;
         }
 
-        /* assumptions:
-            - the database is empty or was loaded from this same file: an ID is unique only within one file.
-            - the INDI records go first, so that the spouse and child references in the FAM records point to existing db records.
-         */
         File file = new File(resource.getFile());
 
         try (
                 FileReader frdr = new FileReader(file);
-                BufferedReader reader = new BufferedReader(frdr)
                 ) {
+            return readFile(frdr);
+        } catch (Exception ex) {
+            // TODO real handling and/or logging
+            ex.printStackTrace();
+        }
+
+        return false;
+    }
+
+    /**
+     * Reads the file from some initialized "Reader".
+     * @param basicreader
+     * @return
+     */
+    public boolean readFile(Reader basicreader) {
+        if (basicreader == null) {
+            throw new IllegalArgumentException("basicreader cannot be null");
+        }
+
+        /* assumptions:
+            - the database is empty or was loaded from this same file: an ID is unique only within one file.
+            - the INDI records go first, so that the spouse and child references in the FAM records point to existing db records.
+         */
+
+        try (
+                BufferedReader reader = new BufferedReader(basicreader)
+        ) {
             String line;
             GedcomReader objectReader = new Discarder(); // initialize with dummy value, saves a null-check
             while((line = reader.readLine()) != null) {
@@ -71,6 +94,10 @@ public class GedcomFileReader {
                 }
             }
 
+            // and store the last object (although that would be an ignored TRLR in a real file)
+            objectReader.store(this.treeService);
+
+            // the whole file was read without issues: done!
             return true;
         } catch (IOException ex) {
             // TODO real handling and/or logging

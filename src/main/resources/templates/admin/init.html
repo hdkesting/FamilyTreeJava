@@ -8,14 +8,25 @@
 <div layout:fragment="content">
     <h2>Family Tree Initialization</h2>
     <ul class="menu">
-        <li><a href="/admin/init/clear" onclick="return confirm('Are you sure you want to erase all data?')"/>Remove all data</a></li>
-        <li><a href="/admin/init/load" onclick="return confirm('Do you want to overwrite all changes?')">(Re)load add data from the configured file</a></li>
+        <li><a href="/admin/init/clear" onclick="return go('Are you sure you want to erase all data?')"/>Remove all data</a></li>
+        <li><a href="/admin/init/load" onclick="return go('Do you want to overwrite all changes?')">(Re)load add data from the configured file</a></li>
         <li><a href="/admin">Back to main menu</a></li>
     </ul>
     <p>
         Note that the reload function cannot merge two GEDCOM files, it will only overwrite (and restore) existing data as identified by its ID.
     </p>
     <p th:if="${message} != null" th:text="${message}" class="bg-info text-white">message</p>
+
+    <script>
+        function go(message) {
+            if (confirm(message)) {
+                $("body,html").css("cursor", "progress");
+                return true;
+            } else {
+                return false;
+            }
+        }
+    </script>
 </div>
 </body>
 </html>

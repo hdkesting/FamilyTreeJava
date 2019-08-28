@@ -3,10 +3,11 @@ package nl.hdkesting.familyTree.core.services;
 import nl.hdkesting.familyTree.core.dto.*;
 import nl.hdkesting.familyTree.infrastructure.models.Family;
 import nl.hdkesting.familyTree.infrastructure.models.Individual;
-import nl.hdkesting.familyTree.infrastructure.repositories.MyFamilyRepository;
-import nl.hdkesting.familyTree.infrastructure.repositories.MyIndividualRepository;
+import nl.hdkesting.familyTree.core.interfaces.MyFamilyRepository;
+import nl.hdkesting.familyTree.core.interfaces.MyIndividualRepository;
 import org.springframework.stereotype.Service;
 
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -99,9 +100,15 @@ public class TreeService {
         return this.individualRepository.deleteById(id);
     }
 
+    @Deprecated
     public boolean load(String path) {
         var reader = new GedcomFileReader(this);
         return reader.readFile(path);
+    }
+
+    public boolean load(Reader reader) {
+        var gcReader = new GedcomFileReader(this);
+        return gcReader.readFile(reader);
     }
 
     public void update(IndividualDto person) {
