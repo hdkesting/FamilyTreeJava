@@ -94,6 +94,9 @@ public class GedcomFileReader {
                 }
             }
 
+            // and store the last object (although that would be an ignored TRLR in a real file)
+            objectReader.store(this.treeService);
+
             // the whole file was read without issues: done!
             return true;
         } catch (IOException ex) {
