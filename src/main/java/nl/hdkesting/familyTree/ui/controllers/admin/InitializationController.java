@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.FileReader;
+import java.net.URL;
 
 @Controller
 @RequestMapping(path="/admin/init")
@@ -49,11 +52,29 @@ public class InitializationController {
     @GetMapping(path = "/load")
     public String loadAll(HttpServletRequest request) {
         String path = "source/" + this.appProperties.getGedcomSource();
-        String message;
-        if (this.treeService.load(path)) {
-            message = "File " + path + " is loaded.";
+        String message = null;
+
+        ClassLoader classLoader = getClass().getClassLoader();
+        URL resource = classLoader.getResource(path);
+        if (resource == null) {
+            message = "Could not load resource file " + path;
         } else {
-            message = "Some error loading " + path;
+
+            File file = new File(resource.getFile());
+
+            try (
+                    FileReader frdr = new FileReader(file);
+            ) {
+                if ( this.treeService.load(frdr)) {
+                    message = "File " + path + " is loaded.";
+                } else {
+                    message = "Some error loading " + path;
+                }
+            } catch (Exception ex) {
+                // TODO real handling and/or logging
+                ex.printStackTrace();
+                message = "Error: " + ex;
+            }
         }
 
         request.getSession().setAttribute(MESSAGE_KEY, message);

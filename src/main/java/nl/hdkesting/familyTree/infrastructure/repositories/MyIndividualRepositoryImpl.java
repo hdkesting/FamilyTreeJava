@@ -40,7 +40,7 @@ public class MyIndividualRepositoryImpl
             query = basequery + " and ind.isDeleted=0";
         }
 
-        List<Individual> result = boilerPlate(em -> em.createQuery(
+        List<Individual> result = this.boilerPlate(em -> em.createQuery(
                 query, Individual.class)
                 .setParameter("id", id)
                 .getResultList());
@@ -53,7 +53,7 @@ public class MyIndividualRepositoryImpl
     }
 
     public boolean existsById(long id) {
-        Long result = boilerPlate(em -> em.createQuery(
+        Long result = this.boilerPlate(em -> em.createQuery(
                 "select count(*) " +
                         "from Individual ind " +
                         "where ind.id = :id and deleted=0", Long.class)
@@ -63,45 +63,38 @@ public class MyIndividualRepositoryImpl
     }
 
     public List<Individual> findAll() {
-        List<Individual> result = boilerPlate(em -> em.createQuery(
+        return this.boilerPlate(em -> em.createQuery(
                 "select ind " +
                         "from Individual ind " +
                         "where ind.isDeleted=0", Individual.class)
                 .getResultList());
-
-        return result;
     }
 
     public List<Individual> getAllDeleted() {
-        List<Individual> result = boilerPlate(em -> em.createQuery(
+        return this.boilerPlate(em -> em.createQuery(
                 "select ind " +
                         "from Individual ind " +
                         "where ind.isDeleted=1", Individual.class)
                 .getResultList());
-
-        return result;
     }
 
     public int deleteAll() {
-        // delete *all*.
+        // delete *all* individuals
         // TODO in transaction with family version
-        Integer result = boilerPlate(em ->
+
+        return this.boilerPlate(em ->
                 em.createQuery(
                         "delete from Individual")
                         .executeUpdate()
         );
-
-        return result;
     }
 
     public int restorePersons(List<Long> ids) {
-        Integer count = boilerPlate(em ->
+        return boilerPlate(em ->
                 // need to cast as "setParameterList" isn't available otherwise. It works!
                 ((org.hibernate.query.Query)em.createQuery("update Individual indi set deleted=0 where indi.id in :ids"))
                     .setParameterList("ids", ids)
                     .executeUpdate());
-
-        return count.intValue();
     }
 
     public void save(Individual individual) {
@@ -114,7 +107,7 @@ public class MyIndividualRepositoryImpl
 
     public long add(Individual individual) {
         // get max id but do not ignore deleted items!
-        var newid = boilerPlate(em-> {
+        return this.boilerPlate(em-> {
             long max = em.createQuery("select max(id) from Individual", Long.class)
                     .getSingleResult();
             max++;
@@ -123,8 +116,6 @@ public class MyIndividualRepositoryImpl
 
             return max;
         });
-
-        return newid;
     }
 
     /**
@@ -132,12 +123,10 @@ public class MyIndividualRepositoryImpl
      * @return
      */
     public long count() {
-        Long result = boilerPlate(em -> em.createQuery(
+        return this.boilerPlate(em -> em.createQuery(
                 "select count(*) " +
                         "from Individual ind where ind.isDeleted=0", Long.class) // NB spelling/capitalisation of table name must match class
                 .getSingleResult());
-
-        return result;
     }
 
     /**
@@ -167,7 +156,8 @@ public class MyIndividualRepositoryImpl
      * @return
      */
     public List<Individual> findByLastName(String lastName) {
-        List<Individual> result = boilerPlate(em -> em.createQuery(
+
+        return boilerPlate(em -> em.createQuery(
                 "SELECT ind " +
                     "FROM Individual ind " +
                     "WHERE lastName = :lastname " +
@@ -176,8 +166,6 @@ public class MyIndividualRepositoryImpl
                 .setParameter("lastname", lastName)
                 .getResultList()
             );
-
-        return result;
     }
 
     /**
@@ -194,33 +182,31 @@ public class MyIndividualRepositoryImpl
             lastName2 = "%" + lastName + "%";
         }
 
-        List<Individual> result = boilerPlate(em -> {
-            String qryText = "SELECT indi FROM Individual indi WHERE indi.isDeleted=0 AND indi.lastName LIKE :last";
-            if (!Strings.isNullOrEmpty(firstName)) {
-                var names = firstName.split("\\s+");
-                StringBuilder sb = new StringBuilder(qryText);
-                for (int i=0; i<names.length; i++) {
-                    sb.append(" AND indi.firstNames LIKE :first" + i);
-                }
-                qryText = sb.toString();
+        return this.boilerPlate(em -> {
+                    String qryText = "SELECT indi FROM Individual indi WHERE indi.isDeleted=0 AND indi.lastName LIKE :last";
+                    if (!Strings.isNullOrEmpty(firstName)) {
+                        var names = firstName.split("\\s+");
+                        StringBuilder sb = new StringBuilder(qryText);
+                        for (int i = 0; i < names.length; i++) {
+                            sb.append(" AND indi.firstNames LIKE :first").append(i);
+                        }
+                        qryText = sb.toString();
 
-                Query query = em.createQuery(qryText, Individual.class)
-                        .setParameter("last", lastName2);
+                        Query query = em.createQuery(qryText, Individual.class)
+                                .setParameter("last", lastName2);
 
-                for (int i=0; i<names.length; i++) {
-                    query.setParameter("first" + i, "%" + names[i] + "%");
-                }
+                        for (int i = 0; i < names.length; i++) {
+                            query.setParameter("first" + i, "%" + names[i] + "%");
+                        }
 
-                return query.getResultList();
-            }
+                        return (List<Individual>) query.getResultList();
+                    }
 
-            return em.createQuery(qryText, Individual.class)
-                             .setParameter("last", lastName2)
+                    return em.createQuery(qryText, Individual.class)
+                            .setParameter("last", lastName2)
                             .getResultList();
-            }
+                }
         );
-
-        return result;
     }
 
     /**
@@ -243,9 +229,9 @@ public class MyIndividualRepositoryImpl
             return cnt;
         });*/
 
-        var dels = boilerPlate(em -> em.createQuery("update Individual indi set deleted = 1 where indi.id = :id")
-                  .setParameter("id", id)
-                    .executeUpdate());
+        var dels = this.boilerPlate(em -> em.createQuery("update Individual indi set deleted = 1 where indi.id = :id")
+                .setParameter("id", id)
+                .executeUpdate());
 
         return dels > 0;
     }
