@@ -11,6 +11,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -37,13 +40,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public UserDetailsService userDetailsService() {
         // https://stackoverflow.com/questions/49847791/java-spring-security-user-withdefaultpasswordencoder-is-deprecated
-        UserDetails user =
-                User.withDefaultPasswordEncoder() // deprecated because of clear text credentials but apparently fine for demo code like this
+        List<UserDetails> users = new ArrayList<>();
+        users.add(User.withDefaultPasswordEncoder() // deprecated because of clear text credentials but apparently fine for demo code like this
                         .username("admin")
                         .password("Pa$$w0rd")
                         .roles(ADMIN_ROLE)
-                        .build();
+                        .build());
 
-        return new InMemoryUserDetailsManager(user);
+        return new InMemoryUserDetailsManager(users);
     }
 }
