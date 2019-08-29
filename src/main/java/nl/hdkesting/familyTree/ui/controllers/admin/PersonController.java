@@ -27,10 +27,7 @@ public class PersonController {
     }
 
     @GetMapping(path = "/edit/{id}")
-    public String getEditPerson(@PathVariable long id, Model model, HttpServletRequest request) {
-        if (!AdminController.isLoggedIn(request)) {
-            return AdminController.LOGIN_REDIRECT;
-        }
+    public String getEditPerson(@PathVariable long id, Model model) {
 
         Optional<IndividualDto> opt = this.treeService.getIndividualById(id);
         if (opt.isEmpty()) {
@@ -45,9 +42,6 @@ public class PersonController {
 
     @PostMapping(path = "/edit/{id}")
     public String postEditPerson(@PathVariable long id, IndividualVm personVm, HttpServletRequest request) {
-        if (!AdminController.isLoggedIn(request)) {
-            return AdminController.LOGIN_REDIRECT;
-        }
 
         Optional<IndividualDto> personOpt = this.treeService.getIndividualById(id);
         if (personOpt.isEmpty()) {
@@ -86,10 +80,7 @@ public class PersonController {
     }
 
     @GetMapping(path = "/delete/{id}")
-    public String getPersonDelete(@PathVariable long id, Model model, HttpServletRequest request) {
-        if (!AdminController.isLoggedIn(request)) {
-            return AdminController.LOGIN_REDIRECT;
-        }
+    public String getPersonDelete(@PathVariable long id, Model model) {
 
         Optional<IndividualDto> personOpt = this.treeService.getIndividualById(id);
         if (personOpt.isEmpty()) {
@@ -105,10 +96,6 @@ public class PersonController {
 
     @PostMapping(path = "/delete/{id}")
     public String postPersonDelete(@PathVariable long id, Model model, HttpServletRequest request) {
-        if (!AdminController.isLoggedIn(request)) {
-            return AdminController.LOGIN_REDIRECT;
-        }
-
         var o = request.getParameter("confirmid");
         var x = request.getParameterNames();
         if (o != null) {
@@ -127,10 +114,7 @@ public class PersonController {
     }
 
     @GetMapping(path = "/show/{id}")
-    public String showPerson(@PathVariable long id, Model model, HttpServletRequest request) {
-        if (!AdminController.isLoggedIn(request)) {
-            return AdminController.LOGIN_REDIRECT;
-        }
+    public String showPerson(@PathVariable long id, Model model) {
 
         // load "personDetailsVm", same as in EditController, but skip the grandparents
         PersonDetailsVm person = new PersonDetailsVm();
@@ -178,11 +162,7 @@ public class PersonController {
             @RequestParam(value = "primary", required = true) long primary,
             @RequestParam(value = "cfam", required = false) Long cfam,
             @RequestParam(value = "sfam", required = false) Long sfam,
-            Model model,
-            HttpServletRequest request) {
-        if (!AdminController.isLoggedIn(request)) {
-            return AdminController.LOGIN_REDIRECT;
-        }
+            Model model) {
 
         // preserve supplied values
         model.addAttribute("primary", primary);
@@ -197,10 +177,6 @@ public class PersonController {
 
     @PostMapping(path = "/add")
     public String postAddPerson(IndividualVm personVm, HttpServletRequest request) {
-        if (!AdminController.isLoggedIn(request)) {
-            return AdminController.LOGIN_REDIRECT;
-        }
-
         long primary = Long.parseLong(request.getParameter("primary"));
         long cfam = Long.parseLong("0" + request.getParameter("cfam"));
         long sfam = Long.parseLong("0" + request.getParameter("sfam"));
@@ -239,9 +215,6 @@ public class PersonController {
 
     @GetMapping(path = "/restore")
     public String getRestoreDeleted(Model model, HttpServletRequest request) {
-        if (!AdminController.isLoggedIn(request)) {
-            return AdminController.LOGIN_REDIRECT;
-        }
         // get all soft-deleted people
         // add list to model
 
@@ -262,9 +235,6 @@ public class PersonController {
 
     @PostMapping(path = "/restore")
     public String postRestoreDeleted(HttpServletRequest request) {
-        if (!AdminController.isLoggedIn(request)) {
-            return AdminController.LOGIN_REDIRECT;
-        }
         // get button: "restore checked" or "hard-delete checked"
 
         List<Long> ids = new ArrayList<>();
