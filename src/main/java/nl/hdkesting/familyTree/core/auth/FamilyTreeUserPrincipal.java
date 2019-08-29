@@ -1,25 +1,35 @@
 package nl.hdkesting.familyTree.core.auth;
 
+import nl.hdkesting.familyTree.infrastructure.models.AuthGroup;
 import nl.hdkesting.familyTree.infrastructure.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 
 public class FamilyTreeUserPrincipal implements UserDetails {
     private final User user;
+    private final List<AuthGroup> authGroups;
 
-    public FamilyTreeUserPrincipal(User user) {
+    public FamilyTreeUserPrincipal(User user, List<AuthGroup> authGroups) {
         super();
         this.user = user;
+        this.authGroups = authGroups;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        // apparently "hasRole" adds "ROLE_" to the supplied name !! Java is great
-        return Collections.singleton(new SimpleGrantedAuthority("ROLE_" + FamilyTreeRole.ADMIN.toString()));
+        if (this.authGroups == null) {
+            return Collections.emptySet();
+        }
+
+        Set<SimpleGrantedAuthority> grantedAuthorities = new HashSet<>();
+        authGroups.forEach(grp -> {
+            grantedAuthorities.add(new SimpleGrantedAuthority("ROLE_" + grp.getAuthGroup())); // *need* to add "ROLE_" !
+        });
+
+        return grantedAuthorities;
     }
 
     @Override

@@ -1,5 +1,6 @@
 package nl.hdkesting.familyTree.core.auth;
 
+import nl.hdkesting.familyTree.infrastructure.repositories.AuthGroupRepository;
 import nl.hdkesting.familyTree.infrastructure.repositories.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,10 +10,12 @@ import org.springframework.stereotype.Service;
 @Service
 public class FamilyTreeUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
+    private final AuthGroupRepository authGroupRepository;
 
-    public FamilyTreeUserDetailsService(UserRepository userRepository) {
+    public FamilyTreeUserDetailsService(UserRepository userRepository, AuthGroupRepository authGroupRepository) {
         super();
         this.userRepository = userRepository;
+        this.authGroupRepository = authGroupRepository;
     }
 
     @Override
@@ -23,6 +26,8 @@ public class FamilyTreeUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("Unknown user name: " + username);
         }
 
-        return new FamilyTreeUserPrincipal(user);
+        var groups = this.authGroupRepository.findByUsername(username);
+
+        return new FamilyTreeUserPrincipal(user, groups);
     }
 }
