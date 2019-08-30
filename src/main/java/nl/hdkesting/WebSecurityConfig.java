@@ -47,6 +47,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .permitAll()
                 .and()
                     .logout()
+                    .invalidateHttpSession(true)
+                    .clearAuthentication(true)
                     .permitAll()
                 .and()
                     .csrf().disable(); // seems harsh, isn't there a better way to allow POSTs?

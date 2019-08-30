@@ -1,7 +1,7 @@
 package nl.hdkesting.familyTree.core.auth;
 
-import nl.hdkesting.familyTree.infrastructure.repositories.AuthGroupRepository;
-import nl.hdkesting.familyTree.infrastructure.repositories.UserRepository;
+import nl.hdkesting.familyTree.core.interfaces.AuthGroupRepository;
+import nl.hdkesting.familyTree.core.interfaces.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

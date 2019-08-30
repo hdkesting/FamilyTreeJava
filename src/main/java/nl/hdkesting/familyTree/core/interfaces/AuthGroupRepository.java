@@ -1,4 +1,4 @@
-package nl.hdkesting.familyTree.infrastructure.repositories;
+package nl.hdkesting.familyTree.core.interfaces;
 
 import nl.hdkesting.familyTree.infrastructure.models.AuthGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
