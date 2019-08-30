@@ -9,10 +9,11 @@ import java.util.regex.Pattern;
  * It ignores the possibility of non-Gregorian calendars.
  */
 public class GedcomDate {
-    private static final Pattern dmyPattern = Pattern.compile("\\d{1,2} (Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sept|Oct|Nov|Dec) \\d{4}");
-    private static final Pattern myPattern = Pattern.compile("(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec) \\d{4}");
+    private static final Pattern dmyPattern = Pattern.compile("\\d{1,2} [A-Z][a-z]{2} \\d{4}");
+    private static final Pattern myPattern = Pattern.compile("[A-Z][a-z]{2} \\d{4}");
     private static final Pattern yPattern = Pattern.compile("\\d{4}");
-    private static final String[] monthNames = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    private static final String[] monthNamesEn = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
+    private static final String[] monthNamesNl = {"Jan", "Feb", "Mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"};
 
     private LocalDate date;
     private boolean isExact;
@@ -58,9 +59,9 @@ public class GedcomDate {
 
         m = yPattern.matcher(value);
         if (m.find()) {
-            // inexact date: month + year
+            // inexact date: year
             String[] parts = value.substring(m.start(), m.end()).split(" ");
-            return new GedcomDate(getDate("1", monthNames[0], parts[0]), false);
+            return new GedcomDate(getDate("1", monthNamesEn[0], parts[0]), false);
         }
 
         return null;
@@ -68,7 +69,9 @@ public class GedcomDate {
 
     private static LocalDate getDate(String day, String month, String year) {
         int iday = Integer.parseInt(day, 10);
-        int imonth = getArrayIndex(monthNames, month)+1;
+        int imonthEn = getArrayIndex(monthNamesEn, month)+1;
+        int imonthNl = getArrayIndex(monthNamesNl, month)+1;
+        int imonth = imonthEn > 0 ? imonthEn : imonthNl > 0 ? imonthNl : 1;
         int iyear = Integer.parseInt(year);
 
         return LocalDate.of(iyear, imonth, iday);
