@@ -37,6 +37,8 @@ public class AdminController {
     public String getSearch(HttpServletRequest request, Model model) {
         String first = (String)request.getSession().getAttribute("firstname");
         String last = (String)request.getSession().getAttribute("lastname");
+        first = first.trim();
+        last = last.trim();
         model.addAttribute("firstname", first);
         model.addAttribute("lastname", last);
 
