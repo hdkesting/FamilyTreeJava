@@ -9,8 +9,8 @@ import java.util.regex.Pattern;
  * It ignores the possibility of non-Gregorian calendars.
  */
 public class GedcomDate {
-    private static final Pattern dmyPattern = Pattern.compile("\\d{1,2} [A-Z][a-z]{2} \\d{4}");
-    private static final Pattern myPattern = Pattern.compile("[A-Z][a-z]{2} \\d{4}");
+    private static final Pattern dmyPattern = Pattern.compile("\\d{1,2} [A-Za-z]{3} \\d{4}");
+    private static final Pattern myPattern = Pattern.compile("[A-Za-z]{3} \\d{4}");
     private static final Pattern yPattern = Pattern.compile("\\d{4}");
     private static final String[] monthNamesEn = {"Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     private static final String[] monthNamesNl = {"Jan", "Feb", "Mrt", "Apr", "Mei", "Jun", "Jul", "Aug", "Sep", "Okt", "Nov", "Dec"};
@@ -79,7 +79,7 @@ public class GedcomDate {
 
     private static int getArrayIndex(String[] arr, String value) {
         for(int i=0; i<arr.length; i++){
-            if(arr[i].equals(value)){
+            if(arr[i].equalsIgnoreCase(value)){
                 return i;
             }
         }
