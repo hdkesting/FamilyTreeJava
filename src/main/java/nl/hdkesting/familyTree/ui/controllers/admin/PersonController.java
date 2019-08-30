@@ -29,7 +29,7 @@ public class PersonController {
     @GetMapping(path = "/edit/{id}")
     public String getEditPerson(@PathVariable long id, Model model) {
 
-        Optional<IndividualDto> opt = this.treeService.getIndividualById(id);
+        Optional<IndividualDto> opt = this.treeService.getIndividualById(id, false);
         if (opt.isEmpty()) {
             return "redirect:/admin";
         }
@@ -43,7 +43,7 @@ public class PersonController {
     @PostMapping(path = "/edit/{id}")
     public String postEditPerson(@PathVariable long id, IndividualVm personVm, HttpServletRequest request) {
 
-        Optional<IndividualDto> personOpt = this.treeService.getIndividualById(id);
+        Optional<IndividualDto> personOpt = this.treeService.getIndividualById(id, false);
         if (personOpt.isEmpty()) {
             // TODO some message "unknown person"
             return "redirect:/admin/search";
@@ -82,7 +82,7 @@ public class PersonController {
     @GetMapping(path = "/delete/{id}")
     public String getPersonDelete(@PathVariable long id, Model model) {
 
-        Optional<IndividualDto> personOpt = this.treeService.getIndividualById(id);
+        Optional<IndividualDto> personOpt = this.treeService.getIndividualById(id, false);
         if (personOpt.isEmpty()) {
             // TODO some message "unknown person"
             return "redirect:/admin/search";
@@ -119,7 +119,7 @@ public class PersonController {
         // load "personDetailsVm", same as in EditController, but skip the grandparents
         PersonDetailsVm person = new PersonDetailsVm();
 
-        Optional<IndividualDto> opt = this.treeService.getIndividualById(id);
+        Optional<IndividualDto> opt = this.treeService.getIndividualById(id, false);
         if (opt.isEmpty()) {
             return "redirect:/admin/search";
         }
@@ -129,12 +129,12 @@ public class PersonController {
         model.addAttribute("tabtitle", person.primary.getLastName() + ", " + person.primary.getFirstNames());
 
         // add all his/her marriages (+children)
-        for(var spouseFam : this.treeService.getSpouseFamiliesByIndividualId(id)) {
+        for(var spouseFam : this.treeService.getSpouseFamiliesByIndividualId(id, false)) {
             person.marriages.add(new FamilyVm(spouseFam));
         }
 
         // add parents
-        var childFams = this.treeService.getChildFamiliesByIndividualId(id);
+        var childFams = this.treeService.getChildFamiliesByIndividualId(id, false);
         if (!childFams.isEmpty()) {
             // use the first one, ignore potential others
             person.family = new FamilyVm(childFams.iterator().next());

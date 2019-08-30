@@ -60,7 +60,7 @@ public class GeneaController {
     public String getPerson(@PathVariable long id, Model model) {
         PersonDetailsVm person = new PersonDetailsVm();
 
-        Optional<IndividualDto> opt = this.treeService.getIndividualById(id);
+        Optional<IndividualDto> opt = this.treeService.getIndividualById(id, false);
         if (opt.isEmpty()) {
             return "redirect:/familynames";
         }
@@ -70,12 +70,12 @@ public class GeneaController {
         model.addAttribute("tabtitle", person.primary.getLastName() + ", " + person.primary.getFirstNames());
 
         // add all his/her marriages (+children)
-        for(var spouseFam : this.treeService.getSpouseFamiliesByIndividualId(id)) {
+        for(var spouseFam : this.treeService.getSpouseFamiliesByIndividualId(id, false)) {
             person.marriages.add(new FamilyVm(spouseFam));
         }
 
         // add parents
-        var childFams = this.treeService.getChildFamiliesByIndividualId(id);
+        var childFams = this.treeService.getChildFamiliesByIndividualId(id, false);
         if (!childFams.isEmpty()) {
             // use the first one, ignore potential others
             person.family = new FamilyVm(childFams.iterator().next());
@@ -83,13 +83,13 @@ public class GeneaController {
 
             // add grandparents (only needed when any parents are known)
             if (person.family.getHusband() != null) {
-                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.getHusband().getId());
+                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.getHusband().getId(), false);
                 if (!fam.isEmpty()) {
                     person.paternalGrandparents = new FamilyVm(fam.iterator().next());
                 }
             }
             if (person.family.getWife() != null) {
-                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.getWife().getId());
+                var fam = this.treeService.getChildFamiliesByIndividualId(person.family.getWife().getId(), false);
                 if (!fam.isEmpty()) {
                     person.maternalGrandparents = new FamilyVm(fam.iterator().next());
                 }

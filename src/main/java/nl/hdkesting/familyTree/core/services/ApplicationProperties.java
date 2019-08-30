@@ -23,12 +23,4 @@ public class ApplicationProperties {
     public String getGedcomSource() {
         return props.getProperty("gedcom.source");
     }
-
-    public String getEncodedAdminUsername() {
-        return props.getProperty("admin.user");
-    }
-
-    public String getEncodedAdminPassword() {
-        return props.getProperty("admin.password");
-    }
 }

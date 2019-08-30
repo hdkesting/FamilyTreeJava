@@ -28,8 +28,8 @@ public class TreeService {
         this.individualRepository = individualRepository;
     }
 
-    public Optional<IndividualDto> getIndividualById(long id) {
-        Optional<Individual> individual = this.individualRepository.findById(id, false);
+    public Optional<IndividualDto> getIndividualById(long id, boolean includeDeleted) {
+        Optional<Individual> individual = this.individualRepository.findById(id, includeDeleted);
 
         if (individual.isPresent()) {
             IndividualDto dto = getNewIndividualDto(id);
@@ -65,24 +65,24 @@ public class TreeService {
         return this.individualRepository.restorePersons(ids);
     }
 
-    public List<FamilyDto> getSpouseFamiliesByIndividualId(long id) {
+    public List<FamilyDto> getSpouseFamiliesByIndividualId(long id, boolean includeDeleted) {
         List<Family> families = this.familyRepository.getFamiliesBySpouseId(id);
-        return convertFamilies(families);
+        return convertFamilies(families, includeDeleted);
     }
 
-    public List<FamilyDto> getChildFamiliesByIndividualId(long id) {
+    public List<FamilyDto> getChildFamiliesByIndividualId(long id, boolean includeDeleted) {
         List<Family> families = this.familyRepository.getFamiliesByChildId(id);
-        return convertFamilies(families);
+        return convertFamilies(families, includeDeleted);
     }
 
-    public Optional<FamilyDto> getFamilyById(long id) {
+    public Optional<FamilyDto> getFamilyById(long id, boolean includeDeleted) {
         var fam = this.familyRepository.findById(id);
 
         if (fam.isEmpty()) {
             return Optional.empty();
         }
 
-        return Optional.of(convert(fam.get()));
+        return Optional.of(convert(fam.get(), includeDeleted));
     }
 
     public boolean clearAll() {
@@ -309,11 +309,11 @@ public class TreeService {
         return result;
     }
 
-    private List<FamilyDto> convertFamilies(List<Family> list) {
+    private List<FamilyDto> convertFamilies(List<Family> list, boolean includeDeleted) {
         List<FamilyDto> result = new ArrayList<>(list.size());
         for (Family fam : list) {
             FamilyDto dto = getNewFamilyDto(fam.id);
-            map(fam, dto);
+            map(fam, dto, includeDeleted);
             result.add(dto);
         }
 
@@ -326,16 +326,16 @@ public class TreeService {
         return target;
     }
 
-    private Individual convert(IndividualDto source) {
-        Individual target = individualRepository.findById(source.getId(), true)
+    private Individual convert(IndividualDto source, boolean includeDeleted) {
+        Individual target = individualRepository.findById(source.getId(), includeDeleted)
                 .orElseGet(() -> getNewIndividual(source.getId()));
         map(source, target);
         return target;
     }
 
-    private FamilyDto convert(Family source) {
+    private FamilyDto convert(Family source, boolean includeDeleted) {
         FamilyDto target = getNewFamilyDto(source.id);
-        map(source, target);
+        map(source, target, includeDeleted);
         return target;
     }
 
@@ -373,18 +373,22 @@ public class TreeService {
         toDbFamily.divorcePlace = fromDtoFamily.getDivorcePlace();
     }
 
-    private void map(Family fromDbFamily, FamilyDto toDtoFamily) {
+    private void map(Family fromDbFamily, FamilyDto toDtoFamily, boolean includeDeleted) {
         toDtoFamily.setMarriageDate(fromDbFamily.marriageDate);
         toDtoFamily.setMarriagePlace(fromDbFamily.marriagePlace);
         toDtoFamily.setDivorceDate(fromDbFamily.divorceDate);
         toDtoFamily.setDivorcePlace(fromDbFamily.divorcePlace);
 
         for (var spouse : fromDbFamily.spouses) {
-            toDtoFamily.getSpouses().add(convert(spouse));
+            if (includeDeleted || !spouse.isDeleted) {
+                toDtoFamily.getSpouses().add(convert(spouse));
+            }
         }
 
         for (var child : fromDbFamily.children) {
-            toDtoFamily.getChildren().add(convert(child));
+            if (includeDeleted || !child.isDeleted) {
+                toDtoFamily.getChildren().add(convert(child));
+            }
         }
     }
 

@@ -4,9 +4,6 @@ import nl.hdkesting.familyTree.core.dto.IndividualDto;
 import nl.hdkesting.familyTree.core.dto.Sex;
 import nl.hdkesting.familyTree.core.services.TreeService;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**

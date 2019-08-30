@@ -27,7 +27,7 @@ public class FamilyController {
     @GetMapping(path = "/edit/{id}")
     public String getEditFamily(@PathVariable long id, Model model) {
 
-        Optional<FamilyDto> opt = this.treeService.getFamilyById(id);
+        Optional<FamilyDto> opt = this.treeService.getFamilyById(id, false);
         if (opt.isEmpty()) {
             return "redirect:/admin/search";
         }
@@ -41,7 +41,7 @@ public class FamilyController {
     @PostMapping(path = "/edit/{id}")
     public String postEditFamily(@PathVariable long id, FamilyVm familyVm, HttpServletRequest request) {
 
-        Optional<FamilyDto> opt = this.treeService.getFamilyById(id);
+        Optional<FamilyDto> opt = this.treeService.getFamilyById(id, false);
         if (opt.isEmpty()) {
             // TODO some message "unknown person"
             return "redirect:/admin/search";

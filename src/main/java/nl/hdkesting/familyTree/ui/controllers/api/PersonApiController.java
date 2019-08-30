@@ -25,7 +25,7 @@ public class PersonApiController {
     public ResponseEntity<?> getPerson(@PathVariable long id) {
         PersonDetailsVm person = new PersonDetailsVm();
 
-        Optional<IndividualDto> opt = this.treeService.getIndividualById(id);
+        Optional<IndividualDto> opt = this.treeService.getIndividualById(id, false);
         if (opt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -44,7 +44,7 @@ public class PersonApiController {
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
-        Optional<IndividualDto> personOpt = this.treeService.getIndividualById(id);
+        Optional<IndividualDto> personOpt = this.treeService.getIndividualById(id, false);
         if (personOpt.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
