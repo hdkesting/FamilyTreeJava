@@ -37,12 +37,22 @@ public class AdminController {
     public String getSearch(HttpServletRequest request, Model model) {
         String first = (String)request.getSession().getAttribute("firstname");
         String last = (String)request.getSession().getAttribute("lastname");
-        first = first.trim();
-        last = last.trim();
+        if (first == null) {
+            first = "";
+        } else {
+            first = first.trim();
+        }
+
+        if (last == null) {
+            last = "";
+        } else {
+            last = last.trim();
+        }
         model.addAttribute("firstname", first);
         model.addAttribute("lastname", last);
 
-        if (first != null && last != null) {
+        // at least *something* to search on
+        if (first.length() > 0 || last.length() > 0) {
             List<IndividualDto> dtoResult = this.treeService.searchByName(first, last);
 
             List<IndividualVm> result = new ArrayList<>(dtoResult.size());
