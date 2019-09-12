@@ -38,7 +38,7 @@
         </tr>
     </table>
 
-    <h2>Marriage(s)</span></h2>
+    <h2>Marriage(s)</h2>
         <div th:each="family : ${person.marriages}">
             <p th:if="${family.wife != null && family.wife.id != person.primary.id}">
                 <strong>Married to</strong> <span th:replace="fragments/adminlayout :: personline(${family.wife}, ${person.primary.getId()})">wife</span>
